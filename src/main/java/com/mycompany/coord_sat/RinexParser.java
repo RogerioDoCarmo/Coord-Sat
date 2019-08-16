@@ -16,15 +16,27 @@ public class RinexParser {
     
     public static void main (String[] args) throws IOException {
         
+        System.out.println("==============================================\n");
+        System.out.println("    Calculo de Coordenadas de Satelites\n");
+        System.out.println("==============================================\n\n");
+        
         String fileName = "C:\\Users\\Rogerio\\Desktop\\brdc2190.19n";
         
-        readRINEX_RawAssets(fileName);
+        //readRINEX_RawAssets(fileName);
+        
+        System.out.println(fileName);
+        
     }
     
     public static ArrayList<GNSSNavMsg> listaEfemeridesOriginal = new ArrayList<>();
-    
-    public static ArrayList<CoordenadaGPS> listaCoordAtual = new ArrayList<>();
+    public static ArrayList<GNSSMeasurement> listaMedicoesOriginal = new ArrayList<>();
+
     public static ArrayList<GNSSNavMsg> listaEfemeridesAtual = new ArrayList<>();
+    public static ArrayList<GNSSMeasurement> listaMedicoesAtual = new ArrayList<>();
+    public static ArrayList<CoordenadaGPS> listaCoordAtual = new ArrayList<>();
+    public static ArrayList<Integer> listaPRNsAtual = new ArrayList<>();
+    public static ArrayList<EpocaGPS> listaEpocas = new ArrayList<>();
+    
     
     public static EpocaGPS epocaAtual;
     

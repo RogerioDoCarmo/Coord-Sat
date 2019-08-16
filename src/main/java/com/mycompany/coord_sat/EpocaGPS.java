@@ -14,7 +14,7 @@ public class EpocaGPS{
     private GNSSDate UTC;
     private ArrayList<Integer> listaPRNs;
     private int numSatelites;
-   // private ArrayList<GNSSMeasurement> listaMedicoes;
+    private ArrayList<GNSSMeasurement> listaMedicoes;
     private int numMedicoes;
     private ArrayList<CoordenadaGPS> listaCoordSatelites;
     private int numMsgNav;
@@ -26,7 +26,7 @@ public class EpocaGPS{
         this.setFctSeconds(FctSeconds);
         this.listaPRNs = new ArrayList<>();
         this.listaCoordSatelites = new ArrayList<>();
-        //this.listaMedicoes = new ArrayList<>();
+        this.listaMedicoes = new ArrayList<>();
         this.listaMsgNavegacao = new ArrayList<>();
         this.numSatelites = 0;
         this.numMedicoes = 0;
@@ -36,7 +36,7 @@ public class EpocaGPS{
     public EpocaGPS(){
         this.listaPRNs = new ArrayList<>();
         this.listaCoordSatelites = new ArrayList<>();
-        //this.listaMedicoes = new ArrayList<>();
+        this.listaMedicoes = new ArrayList<>();
         this.listaMsgNavegacao = new ArrayList<>();
     }
 
@@ -53,7 +53,7 @@ public class EpocaGPS{
     public EpocaGPS(GNSSDate UTC){
         this.setData(UTC);
         this.listaPRNs = new ArrayList<>();
-//        this.listaMedicoes = new ArrayList<>();
+        this.listaMedicoes = new ArrayList<>();
         this.listaCoordSatelites = new ArrayList<>();
     }
 
@@ -233,7 +233,7 @@ public class EpocaGPS{
         ArrayList<Double> lista = new ArrayList<>();
 
         for (int i = 0; i < listaMedicoes.size(); i++){
-            lista.add( listaMedicoes.get(i).getPseudorangeMeters());
+//            lista.add( listaMedicoes.get(i).getPseudorangeMeters());
         }
 
         return lista;
@@ -243,7 +243,7 @@ public class EpocaGPS{
         ArrayList<Double> result = new ArrayList<>();
 
         for (int i = 0; i < listaMedicoes.size(); i++) {
-            result.add(listaMedicoes.get(i).getCn0DbHz());
+//            result.add(listaMedicoes.get(i).getCn0DbHz());
         }
         return result;
     }
@@ -252,7 +252,7 @@ public class EpocaGPS{
         ArrayList<Integer> result = new ArrayList<>();
 
         for (int i = 0; i < listaMedicoes.size(); i++) {
-            result.add(listaMedicoes.get(i).getMultipathIndicator());
+//            result.add(listaMedicoes.get(i).getMultipathIndicator());
         }
         return result;
     }

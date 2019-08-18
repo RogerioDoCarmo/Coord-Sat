@@ -20,12 +20,13 @@ public class RinexParser {
         System.out.println("    Calculo de Coordenadas de Satelites\n");
         System.out.println("==============================================\n\n");
         
-        String fileName = "C:\\Users\\Rogerio\\Desktop\\brdc2190.19n";
+        String fileName = "C:\\Users\\Rogerio\\Desktop\\testeGPS.txt";
         
-        //readRINEX_RawAssets(fileName);
+        readRINEX_RawAssets(fileName);       
         
-        System.out.println(fileName);
+        System.out.println("Arquivo: " + fileName + "\n\n");
         
+        calcCoordSat();        
     }
     
     public static ArrayList<GNSSNavMsg> listaEfemeridesOriginal = new ArrayList<>();
@@ -39,6 +40,7 @@ public class RinexParser {
     
     
     public static EpocaGPS epocaAtual;
+    public static GNSSDate dataAtual;
     
     private static int qntSatEpchAtual;
       
@@ -47,6 +49,8 @@ public class RinexParser {
 
         StringBuilder sb = new StringBuilder();
 
+//        listaEfemeridesAtual = new ArrayList()<>;
+        
         //PULANDO O CABEÇALHO DE 8 LINHAS
         String mLine = reader.readLine();
         mLine = reader.readLine();
@@ -58,7 +62,7 @@ public class RinexParser {
         mLine = reader.readLine();
 
         String sub = "";
-        int numEfemerides = 537; // TODO REVISAR
+        int numEfemerides = 1; // TODO REVISAR
 
         for (int i = 0; i < numEfemerides; i++){
             GNSSNavMsg efemeride = new GNSSNavMsg();
@@ -79,6 +83,7 @@ public class RinexParser {
 
                 GNSSDate data = new GNSSDate(year, month, day, hour, minute, seconds);
                 efemeride.setGNSSDate(data);
+                dataAtual = data;
 
             }catch (Exception err){
                 efemeride.setToc(0);
@@ -213,18 +218,137 @@ public class RinexParser {
                 efemeride.setFit_interval(0);
             }
 
-            listaEfemeridesOriginal.add(efemeride);
+            listaEfemeridesAtual.add(efemeride);
         }
 
         reader.close();
         return sb.toString();
     }
 
-    public double calc_Tr(GNSSDate dataGNSS) {
+    public static double calc_Toc(GNSSDate dataGNSS) {
         return (  (dataGNSS.getDay_week() * 24 + dataGNSS.getHour()) * 3600 + dataGNSS.getMin() * 60 + dataGNSS.getSec() );
     }
+ 
+    private static void calcCoordSat() {
+//        GNSSDate dataObservacao = epocaAtual.getDateUTC();
+
+        GNSSDate dataObservacao = listaEfemeridesAtual.get(0).getData();
+
+        qntSatEpchAtual = 1;
+        
+        for (int i = 0; i < qntSatEpchAtual; i++ ){// FIXME
+            double a0 = listaEfemeridesAtual.get(i).getAf0();
+            double a1 = listaEfemeridesAtual.get(i).getAf1();
+            double a2 = listaEfemeridesAtual.get(i).getAf2();
+
+            double Crs = listaEfemeridesAtual.get(i).getCrs();
+            double delta_n = listaEfemeridesAtual.get(i).getDelta_n();
+            double m0 = listaEfemeridesAtual.get(i).getM0();
+
+            double Cuc = listaEfemeridesAtual.get(i).getCuc();
+            double e = listaEfemeridesAtual.get(i).getE();
+            double Cus = listaEfemeridesAtual.get(i).getCus();
+            double a = listaEfemeridesAtual.get(i).getAsqrt() * listaEfemeridesAtual.get(i).getAsqrt();
+
+            double toe = listaEfemeridesAtual.get(i).getToe();
+            
+            double trs = listaEfemeridesAtual.get(i).getTtx();
+            
+            double Cic = listaEfemeridesAtual.get(i).getCic();
+            double omega_0 = listaEfemeridesAtual.get(i).get0mega_0();
+            double Cis = listaEfemeridesAtual.get(i).getCis();
+
+            double io = listaEfemeridesAtual.get(i).getI0();
+            double Crc = listaEfemeridesAtual.get(i).getCrc();
+            double w = listaEfemeridesAtual.get(i).getW();
+            double omega_v = listaEfemeridesAtual.get(i).getOmega_v();
+            double idot = listaEfemeridesAtual.get(i).getIDOT();
+
+            /* Tempo de transmisao do sinal */
+            double toc = calc_Toc(dataObservacao);
+            /* Erro do relogio no sistema de tempo do satelite */
+            double dts = a0 + a1 * (trs - toc) + a2 * (Math.pow(trs - toc,2.0));            
+            double tgps = toc - dts;
+
+            double delta_tk = tgps - toe;
+
+            /*
+              Considerando possível mudança de semana
+              Autor: Bruno Vani
+             */
+            if (delta_tk > 302400)
+                delta_tk = delta_tk - 604800;
+            else if (delta_tk < -302400)
+                delta_tk = delta_tk + 604800;
+
+            /*(4.9)*/
+            double no = Math.sqrt(GM / (a*a*a)); // terceira lei de kepler
+
+            /*(4.10)*/
+            double n = no + delta_n; // movimento medio corrigido
+            double mk = m0 + n * delta_tk; // anomalia media
+
+            /*
+              iteracao - anomalia excentrica
+             */
+            /*(4.11)*/
+            double ek = mk;
+            for (int k = 0; k < 7; k++){
+                ek = mk + e * Math.sin(ek);
+            }
+
+            // Anomalia verdadeira
+            /*(4.12)*/
+            double sen_vk = ( (Math.sqrt(1 - (e * e)) ) * Math.sin(ek) )  / ( 1 - (e * Math.cos(ek)) );
+            double cos_vk = (Math.cos(ek) - e) / (1 - e * Math.cos(ek) );
+
+            /*
+              Teste do quadrante
+              autor: Bruno Vani
+             */
+            double vk = 0d;
+            if (((sen_vk >= 0) && (cos_vk >= 0)) || (sen_vk < 0) && (cos_vk >= 0)) { // I ou III quadrante
+                vk = Math.atan(sen_vk / cos_vk);
+            } else if (((sen_vk >= 0) && (cos_vk < 0)) || ((sen_vk < 0 ) && (cos_vk) < 0)) { //  II ou IV quadrante
+                vk = Math.atan(sen_vk / cos_vk) + 3.1415926535898; // FIXME Math.pi();
+            } else{
+//                Log.e("VK","Erro no ajuste do quadrante!");
+            }
+
+            //coordenadas planas do satelite
+            /*(4.13)*/
+            double fik = vk + w; // argumento da latitude
+            double delta_uk = Cuc * Math.cos(2 * fik) + Cus * Math.sin(2 * fik); // correcao do argumento da latitude
+            // latitude
+            double uk = fik + delta_uk; //argumento da latitude corrigido
+            /*(4.14)*/
+            double delta_rk = Crc * Math.cos(2 * fik) + Crs * Math.sin(2 * fik); //correcao do raio
+            double rk = a * (1 - e * Math.cos(ek)) + delta_rk; //raio corrigido
+
+            double delta_ik = Cic * Math.cos(2 * fik) + Cis * Math.sin(2 * fik); //correcao da inclinacao
+            double ik = io + idot * delta_tk + delta_ik; //inclinacao corrigida
+            /*(4.15)*/
+            // Coordenadas do satélite no plano
+            double xk = rk * Math.cos(uk); //posicao x no plano orbital
+            double yk = rk * Math.sin(uk); //posicao y no plano orbital
+
+            // Coordenadas do satélite em 3D (WGS 84)
+            double Omegak = omega_0 + omega_v * delta_tk - We * tgps;
+
+            // Coordenadas originais do satelites - Saida em Km para comparacao com efemerides precisas
+            double X = ((xk * Math.cos(Omegak)) - (yk * Math.sin(Omegak) * Math.cos(ik))) / 1000;
+            double Y = ((xk * Math.sin(Omegak)) + (yk * Math.cos(Omegak) * Math.cos(ik))) / 1000;
+            double Z = (yk * Math.sin(ik)) / 1000;
+
+            int PRN = listaEfemeridesAtual.get(i).getPRN();
+            CoordenadaGPS novaCoord = new CoordenadaGPS(PRN,X,Y,Z,dts);
+            listaCoordAtual.add(novaCoord);
+            
+            System.out.println("Satelite: 1\n" + novaCoord.toString());
+        }
+    }
     
-    private void calcCoordSat() {
+    private void calcCoordSat_pseudo() {
         GNSSDate dataObservacao = epocaAtual.getDateUTC();
 
         for (int i = 0; i < qntSatEpchAtual; i++ ){// FIXME
@@ -233,7 +357,7 @@ public class RinexParser {
             //------------------------------------------
             //Tempo de recepcao do sinal ->  Hora da observacao
 //            double tr = (3*24+0)*3600 + 0*60 + 0.00; // FIXME CORRIGIR O TEMPO
-//            double tr = calc_Tr(GNSSConstants.DAY_QUA,)
+//            double tr = calc_Toc(GNSSConstants.DAY_QUA,)
             double a0 = listaEfemeridesAtual.get(i).getAf0();
             double a1 = listaEfemeridesAtual.get(i).getAf1();
             double a2 = listaEfemeridesAtual.get(i).getAf2();
@@ -260,7 +384,7 @@ public class RinexParser {
 
             /*Tempo de transmisao do sinal*/
             double dtr = 0d; // ERRO DO RELÓGIO DO RECEPTOR
-            double tr = calc_Tr(dataObservacao);
+            double tr = calc_Toc(dataObservacao);
             double tgps = tr - (listaMedicoesAtual.get(i).getPseudorangeMeters() / LIGHTSPEED);
 
             double dts = a0 + a1 * (tgps - toe) + a2 * (Math.pow(tgps - toe,2.0)); // ERRO DO SATÉLITE fixme É O TOC

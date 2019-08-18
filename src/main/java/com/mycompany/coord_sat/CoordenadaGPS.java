@@ -6,6 +6,14 @@ public class CoordenadaGPS implements Comparable<CoordenadaGPS> {
     private double Y;
     private double Z;
     private double dts; // Erro do relógio em segundos em relação ao sistema de tempo GPS.
+    
+    @Override
+    public String toString(){
+        return "PRN: " + PRN + "\n"   +
+                "X [km]: " + X + "\n" +
+                "Y [km]: " + Y + "\n" +
+                "Z [km]: " + Z + "\n";
+    }
 
     /**
      * Creates an instance of a GPS coordinate to represent a satellite ou receiver position.

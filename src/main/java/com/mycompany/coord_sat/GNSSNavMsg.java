@@ -28,7 +28,7 @@ public class GNSSNavMsg implements Comparable<GNSSNavMsg>{
     private double Crc;	         // Cosine harmonic correction to the orbit radius (meters)
     private double w;	         // Argument of perigee (radians)
     private double Omega_v;      // Rate of right ascension (radians/sec)
-    private double IDOT;	     // Rate of inclination angle (radians/sec)
+    private double IDOT;	 // Rate of inclination angle (radians/sec)
     private double codeL2;       // codes on L2 channel
     private double GPS_Week;     // GPS week (to go with Toe), (NOT Mod 1024)
     private double L2PdataFlag;  // L2 P data flag

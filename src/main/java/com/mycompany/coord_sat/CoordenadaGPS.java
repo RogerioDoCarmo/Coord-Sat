@@ -9,10 +9,11 @@ public class CoordenadaGPS implements Comparable<CoordenadaGPS> {
     
     @Override
     public String toString(){
-        return "PRN: " + PRN + "\n"   +
-                "X [km]: " + X + "\n" +
-                "Y [km]: " + Y + "\n" +
-                "Z [km]: " + Z + "\n";
+        return  "PRN: "    + PRN + "\n" +
+                "X [km]: " + X   + "\n" +
+                "Y [km]: " + Y   + "\n" +
+                "Z [km]: " + Z   + "\n" +
+                "Dts[s]: " + dts + "\n";
     }
 
     /**

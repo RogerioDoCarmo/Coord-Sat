@@ -20,7 +20,7 @@ public class RinexParser {
         System.out.println("    Calculo de Coordenadas de Satelites\n");
         System.out.println("==============================================\n\n");
         
-        String fileName = "C:\\Users\\Rogerio\\Desktop\\testeGPS.txt";
+        String fileName = "C:\\Users\\Rogerio\\Desktop\\teste3.txt";
         
         readRINEX_RawAssets(fileName);       
         

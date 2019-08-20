@@ -20,7 +20,7 @@ public class RinexParser {
         System.out.println("    Calculo de Coordenadas de Satelites\n");
         System.out.println("==============================================\n\n");
         
-        String fileName = "C:\\Users\\Rogerio\\Desktop\\teste3.txt";
+        String fileName = "C:\\Users\\Rogerio\\Desktop\\testeGPS.txt";
         
         readRINEX_RawAssets(fileName);       
         
@@ -179,10 +179,13 @@ public class RinexParser {
             sub = mLine.substring(41, 60).replace('D', 'e');
             double week = Double.parseDouble(sub.trim());
             efemeride.setGPS_Week((int) week);
-
+                        
             sub = mLine.substring(60, 79).replace('D', 'e');
-            double L2Flag = Double.parseDouble(sub.trim());
-            efemeride.setL2PdataFlag((int) L2Flag);
+            
+            if (!sub.isEmpty() && !sub.equals("                   ")) {
+                double L2Flag = Double.parseDouble(sub.trim());
+                efemeride.setL2PdataFlag((int) L2Flag);
+            }           
 //seventh line
 //==================================================================================================
             mLine = reader.readLine();
@@ -210,7 +213,7 @@ public class RinexParser {
             sub = mLine.substring(0, 22).replace('D', 'e');
             efemeride.setTtx(Double.parseDouble(sub.trim()));
 
-            if (len > 22) {
+            if (len > 24) {
                 sub = mLine.substring(22, 41).replace('D', 'e');
                 efemeride.setFit_interval(Double.parseDouble(sub.trim()));
 
@@ -226,7 +229,7 @@ public class RinexParser {
     }
 
     public static double calc_Toc(GNSSDate dataGNSS) {
-        return (  (dataGNSS.getDay_week() * 24 + dataGNSS.getHour()) * 3600 + dataGNSS.getMin() * 60 + dataGNSS.getSec() );
+        return (  (6 * 24 + dataGNSS.getHour()) * 3600 + dataGNSS.getMin() * 60 + dataGNSS.getSec() );
     }
  
     private static void calcCoordSat() {
@@ -340,6 +343,8 @@ public class RinexParser {
             double Y = ((xk * Math.sin(Omegak)) + (yk * Math.cos(Omegak) * Math.cos(ik))) / 1000;
             double Z = (yk * Math.sin(ik)) / 1000;
 
+            dts = dts / 1000000; // Segundos para microsegundos
+            
             int PRN = listaEfemeridesAtual.get(i).getPRN();
             CoordenadaGPS novaCoord = new CoordenadaGPS(PRN,X,Y,Z,dts);
             listaCoordAtual.add(novaCoord);

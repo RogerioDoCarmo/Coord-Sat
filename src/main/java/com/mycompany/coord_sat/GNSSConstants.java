@@ -30,9 +30,12 @@ public class GNSSConstants {
     public static final int C_TO_N0_THRESHOLD_DB_HZ = 18;
     public static final int RECEIVED_SVTIME_UNCERTAINTY_NANOS_THRESHOLD = 500;
     public static final int PSEUDORANGE_UNCERTAINTY_METERS_THRESHOLD = 10;
-    public static final double GM = 3.9860044185E14;
-    public static final double We = 7.2921151467E-5;
-
+    /* Constantes de gravidade e rotacao*/
+    public static final double GM_GPS = 3.9860044185E14;
+    public static final double WE_GPS = 7.2921151467E-5;
+    
+    public static final double GM_BEIDOU = 398600.4418E9;
+    public static final double WE_BEIDOU = 7.2921150E-5;
     public static final int MAX_ITERACOES = 8;
 
     /*Valores copiados do Geo++ RINEX Logger*/

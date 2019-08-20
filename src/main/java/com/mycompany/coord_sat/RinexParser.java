@@ -1,12 +1,12 @@
 package com.mycompany.coord_sat;
 
-import static com.mycompany.coord_sat.GNSSConstants.GM;
 import static com.mycompany.coord_sat.GNSSConstants.LIGHTSPEED;
-import static com.mycompany.coord_sat.GNSSConstants.We;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import static com.mycompany.coord_sat.GNSSConstants.GM_GPS;
+import static com.mycompany.coord_sat.GNSSConstants.WE_GPS;
 
 /**
  *
@@ -20,7 +20,7 @@ public class RinexParser {
         System.out.println("    Calculo de Coordenadas de Satelites\n");
         System.out.println("==============================================\n\n");
         
-        String fileName = "C:\\Users\\Rogerio\\Desktop\\testeGPS.txt";
+        String fileName = "C:\\Users\\Rogerio\\Desktop\\TesteBeidou_MEO.txt";
         
         readRINEX_RawAssets(fileName);       
         
@@ -285,7 +285,7 @@ public class RinexParser {
                 delta_tk = delta_tk + 604800;
 
             /*(4.9)*/
-            double no = Math.sqrt(GM / (a*a*a)); // terceira lei de kepler
+            double no = Math.sqrt(GNSSConstants.GM_BEIDOU / (a*a*a)); // terceira lei de kepler
 
             /*(4.10)*/
             double n = no + delta_n; // movimento medio corrigido
@@ -336,7 +336,7 @@ public class RinexParser {
             double yk = rk * Math.sin(uk); //posicao y no plano orbital
 
             // Coordenadas do satélite em 3D (WGS 84)
-            double Omegak = omega_0 + omega_v * delta_tk - We * tgps;
+            double Omegak = omega_0 + omega_v * delta_tk - GNSSConstants.WE_BEIDOU * tgps;
 
             // Coordenadas originais do satelites - Saida em Km para comparacao com efemerides precisas
             double X = ((xk * Math.cos(Omegak)) - (yk * Math.sin(Omegak) * Math.cos(ik))) / 1000;
@@ -408,7 +408,7 @@ public class RinexParser {
                 delta_tk = delta_tk + 604800;
 
             /*(4.9)*/
-            double no = Math.sqrt(GM / (a*a*a)); // terceira lei de kepler
+            double no = Math.sqrt(GM_GPS / (a*a*a)); // terceira lei de kepler
 
             /*(4.10)*/
             double n = no + delta_n; // movimento medio corrigido
@@ -459,7 +459,7 @@ public class RinexParser {
             double yk = rk * Math.sin(uk); //posicao y no plano orbital
 
             // Coordenadas do satélite em 3D (WGS 84)
-            double Omegak = omega_0 + omega_v * delta_tk - We * tgps;
+            double Omegak = omega_0 + omega_v * delta_tk - WE_GPS * tgps;
 
             // Coordenadas originais do satelites
             double X = ((xk * Math.cos(Omegak)) - (yk * Math.sin(Omegak) * Math.cos(ik)));
@@ -467,7 +467,7 @@ public class RinexParser {
             double Z = (yk * Math.sin(ik));
 
             // Coordenadas do satelites corrigidas do erro de rotacao da Terra
-            double alpha = We * tpropag;
+            double alpha = WE_GPS * tpropag;
             double Xc = X + alpha * Y;
             double Yc = -alpha * X + Y;
             double Zc = Z;

@@ -7,7 +7,7 @@ public class GNSSNavMsg implements Comparable<GNSSNavMsg>{
      * clock variable names af0, af1, af2 follow IS GPS 200
     */
     private GNSSDate data;
-    private Integer PRN;         // SV PRN number
+    private String PRN;         // SV PRN number
     private double Toc;          // Time of clock (seconds)
     private double af0;          // SV clock bias (seconds)
     private double af1;          // SV clock drift (sec/sec)
@@ -39,11 +39,11 @@ public class GNSSNavMsg implements Comparable<GNSSNavMsg>{
     private double ttx;	         // Transmission time of message (seconds)
     private double Fit_interval; //fit interval (hours), zero if not known
 
-    public Integer getPRN() {
+    public String getPRN() {
         return PRN;
     }
 
-    public void setPRN(Integer PRN) {
+    public void setPRN(String PRN) {
         this.PRN = PRN;
     }
 
@@ -295,6 +295,7 @@ public class GNSSNavMsg implements Comparable<GNSSNavMsg>{
         return data;
     }
 
+    
 
     /**
      * Comparable method to sort all the Navigation Messages by the satellite id (PRN)

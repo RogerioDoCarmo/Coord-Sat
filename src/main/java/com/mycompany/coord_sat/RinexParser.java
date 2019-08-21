@@ -20,9 +20,9 @@ public class RinexParser {
         System.out.println("    Calculo de Coordenadas de Satelites\n");
         System.out.println("==============================================\n\n");
         
-        String fileName = "C:\\Users\\Rogerio\\Desktop\\TesteBeidou_IGSO.txt";
+        String fileName = "C:\\Users\\Rogerio\\Desktop\\brdm2150.19p";
         
-        readRINEX_RawAssets(fileName);       
+        readRINEX_Navigation_3(fileName);
         
         System.out.println("Arquivo: " + fileName + "\n\n");
         
@@ -44,7 +44,7 @@ public class RinexParser {
     
     private static int qntSatEpchAtual;
       
-    public static String readRINEX_RawAssets(String fileName) throws IOException {
+    public static String readRINEX_Navigation_3(String fileName) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
 
         StringBuilder sb = new StringBuilder();
@@ -53,16 +53,14 @@ public class RinexParser {
         
         //PULANDO O CABEÇALHO DE 8 LINHAS
         String mLine = reader.readLine();
-        mLine = reader.readLine();
-        mLine = reader.readLine();
-        mLine = reader.readLine();
-        mLine = reader.readLine();
-        mLine = reader.readLine();
-        mLine = reader.readLine();
-        mLine = reader.readLine();
 
+        while( !mLine.contains("END OF HEADER") ) {
+            mLine = reader.readLine();
+        }
+              
         String sub = "";
         int numEfemerides = 1; // TODO REVISAR
+//        numEfemerides = 12184; // 12184,5
 
         for (int i = 0; i < numEfemerides; i++){
             GNSSNavMsg efemeride = new GNSSNavMsg();
@@ -70,34 +68,29 @@ public class RinexParser {
 
 //first line - epoch of satellite clock (toc)
 //==================================================================================================
-            sub = mLine.substring(0, 2).replaceAll("\\s", "");
-            efemeride.setPRN(Integer.valueOf(sub));  // FIXME
+            sub = mLine.substring(0, 4).trim();
+            efemeride.setPRN(sub);  // FIXME
 
             try { // FIXME REVER
-                int year = Integer.valueOf(mLine.substring(3, 6).replaceAll("\\s", ""));
-                int month = Integer.valueOf(mLine.substring(6, 8).replaceAll("\\s", ""));
-                int day = Integer.valueOf(mLine.substring(9, 11).replaceAll("\\s", ""));
-                int hour = Integer.valueOf(mLine.substring(12, 14).replaceAll("\\s", ""));
-                int minute = Integer.valueOf(mLine.substring(15, 17).replaceAll("\\s", ""));
-                double seconds = Double.valueOf(mLine.substring(18, 22).replaceAll("\\s", ""));
+                int    year    = Integer.valueOf(mLine.substring(4 ,  8));
+                int    month   = Integer.valueOf(mLine.substring(9 , 11));
+                int    day     = Integer.valueOf(mLine.substring(12, 14));
+                int    hour    = Integer.valueOf(mLine.substring(15, 17));
+                int    minutes = Integer.valueOf(mLine.substring(18, 20));
+                double seconds = Double .valueOf(mLine.substring(21, 23));
 
-                GNSSDate data = new GNSSDate(year, month, day, hour, minute, seconds);
+                GNSSDate data = new GNSSDate(year, month, day, hour, minutes, seconds);
                 efemeride.setGNSSDate(data);
                 dataAtual = data;
 
             }catch (Exception err){
                 efemeride.setToc(0);
-//                Log.e("TOC-ERR","Erro: " + err.getMessage());
+                err.printStackTrace();
             }
 
-            double af0 = Double.valueOf(mLine.substring(22,41).replace('D','e')
-                    .replaceAll("\\s",""));
-
-            double af1 = Double.valueOf(mLine.substring(41,60).replace('D','e')
-                    .replaceAll("\\s",""));
-
-            double af2 = Double.valueOf(mLine.substring(60,79).replace('D','e')
-                    .replaceAll("\\s",""));
+            double af0 = Double.valueOf(mLine.substring(23,42).replace('D','e').trim());
+            double af1 = Double.valueOf(mLine.substring(42,61).replace('D','e').trim());
+            double af2 = Double.valueOf(mLine.substring(61,80).replace('D','e').trim());
 
             efemeride.setAf0(af0);
             efemeride.setAf1(af1);
@@ -105,19 +98,11 @@ public class RinexParser {
 //second line - broadcast orbit
 //==================================================================================================
             mLine = reader.readLine();
-
-            sub = mLine.substring(3, 22).replace('D', 'e');
-            double iode = Double.parseDouble(sub.trim());
-            efemeride.setIODE(iode);
-
-            sub = mLine.substring(22, 41).replace('D', 'e');
-            efemeride.setCrs(Double.parseDouble(sub.trim()));
-
-            sub = mLine.substring(41, 60).replace('D', 'e');
-            efemeride.setDelta_n(Double.parseDouble(sub.trim()));
-
-            sub = mLine.substring(60, 79).replace('D', 'e');
-            efemeride.setM0(Double.parseDouble(sub.trim()));
+           
+            efemeride.setIODE   (Double.parseDouble(mLine.substring( 4, 23).replace('D', 'e').trim()));
+            efemeride.setCrs    (Double.parseDouble(mLine.substring(23, 42).replace('D', 'e').trim()));
+            efemeride.setDelta_n(Double.parseDouble(mLine.substring(42, 61).replace('D', 'e').trim()));                   
+            efemeride.setM0     (Double.parseDouble(mLine.substring(61, 80).replace('D', 'e').trim()));
 //third line - broadcast orbit (2)
 //==================================================================================================
             mLine = reader.readLine();

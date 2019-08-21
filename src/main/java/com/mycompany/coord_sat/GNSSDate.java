@@ -119,4 +119,8 @@ public class GNSSDate implements Comparable<GNSSDate> {
 //            return new GNSSDate[size];
 //        }
 //    };
+
+    void addSeconds(double d) {
+        this.sec += d;
+    }
 }

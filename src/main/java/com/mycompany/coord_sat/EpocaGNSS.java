@@ -4,7 +4,7 @@ package com.mycompany.coord_sat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class EpocaGPS{
+public class EpocaGNSS{
 
     private Double FctSeconds;
     private Long mArrivalTimeSinceGpsEpochNs;
@@ -16,13 +16,13 @@ public class EpocaGPS{
     private int numSatelites;
     private ArrayList<GNSSMeasurement> listaMedicoes;
     private int numMedicoes;
-    private ArrayList<CoordenadaGPS> listaCoordSatelites;
+    private ArrayList<CoordenadaGNSS> listaCoordSatelites;
     private int numMsgNav;
     private ArrayList<GNSSNavMsg> listaMsgNavegacao;
     private int GPSweekNumber;
     private int GPSsecondsWeek;
 
-    public EpocaGPS(Double FctSeconds){
+    public EpocaGNSS(Double FctSeconds){
         this.setFctSeconds(FctSeconds);
         this.listaPRNs = new ArrayList<>();
         this.listaCoordSatelites = new ArrayList<>();
@@ -33,14 +33,14 @@ public class EpocaGPS{
     }
 
     /*Construtores não-utilizados*/
-    public EpocaGPS(){
+    public EpocaGNSS(){
         this.listaPRNs = new ArrayList<>();
         this.listaCoordSatelites = new ArrayList<>();
         this.listaMedicoes = new ArrayList<>();
         this.listaMsgNavegacao = new ArrayList<>();
     }
 
-    public EpocaGPS(Long allRxNanos){
+    public EpocaGNSS(Long allRxNanos){
         this.mArrivalTimeSinceGpsEpochNs = allRxNanos;
         this.listaPRNs = new ArrayList<>();
         this.listaCoordSatelites = new ArrayList<>();
@@ -50,14 +50,14 @@ public class EpocaGPS{
         this.numMedicoes = 0;
     }
 
-    public EpocaGPS(GNSSDate UTC){
+    public EpocaGNSS(GNSSDate UTC){
         this.setData(UTC);
         this.listaPRNs = new ArrayList<>();
         this.listaMedicoes = new ArrayList<>();
         this.listaCoordSatelites = new ArrayList<>();
     }
 
-    public EpocaGPS(GNSSDate UTC, ArrayList<Integer> listaPRNs){
+    public EpocaGNSS(GNSSDate UTC, ArrayList<Integer> listaPRNs){
         this.setData(UTC);
         this.setListaPRNs(listaPRNs);
         this.setNumSatelites(listaPRNs.size());
@@ -165,11 +165,11 @@ public class EpocaGPS{
         this.numMedicoes = numMedicoes;
     }
 
-    public ArrayList<CoordenadaGPS> getListaCoordSatelites() {
+    public ArrayList<CoordenadaGNSS> getListaCoordSatelites() {
         return listaCoordSatelites;
     }
 
-    public void setListaCoordSatelites(ArrayList<CoordenadaGPS> listaCoordSatelites) {
+    public void setListaCoordSatelites(ArrayList<CoordenadaGNSS> listaCoordSatelites) {
         this.listaCoordSatelites = listaCoordSatelites;
     }
 

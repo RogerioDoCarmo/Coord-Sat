@@ -3,12 +3,12 @@ package com.mycompany.coord_sat;
 import java.text.DecimalFormat;
 
 public class GNSSDate implements Comparable<GNSSDate> {
-    private int year;
-    private int month;
-    private int day;
-    private int day_week;
-    private int hour;
-    private int min;
+    private int    year;
+    private int    month;
+    private int    day;
+    private int    day_week;
+    private int    hour;
+    private int    min;
     private double sec;
 
     /**

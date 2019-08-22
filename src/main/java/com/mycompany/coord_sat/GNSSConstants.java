@@ -15,6 +15,10 @@ public class GNSSConstants {
     public static final int DAY_SAB = 6;
     public static final int CONSTELLATION_GPS = 1;
     public static final int CONSTELLATION_GLONASS = 3;
+    public static final String GPS_LETTER     = "G";
+    public static final String GALILEO_LETTER = "E";
+    public static final String GLONASS_LETTER = "R";
+    public static final String BEIDOU_LETTER  = "C";
     public static final Long WEEKSEC = 604800L; /*Number of seconds in a week*/
     public static final double LIGHTSPEED = 2.99792458e8;
     public static final long GPS_EPOCH_AS_UNIX_EPOCH_MS = TimeUnit.DAYS.toMillis(3657);

@@ -1,7 +1,7 @@
-
+package NTRIP;
 
 import java.util.Date;
-import javax.microedition.io.file.FileConnection;
+//import javax.microedition.io.file.FileConnection;
 
 /*
  * To change this template, choose Tools | Templates
@@ -53,9 +53,9 @@ public class RTCM3ParserData {
   public double antH;
   public char[] antenna= new char[256+1];
   public int  blocktype;
-  public FileConnection glonassfile=null;
-  public FileConnection gpsfile=null;
-  public FileConnection observ;
+//  public FileConnection glonassfile=null;
+//  public FileConnection gpsfile=null;
+//  public FileConnection observ;
 
 
   public RTCM3ParserData() {

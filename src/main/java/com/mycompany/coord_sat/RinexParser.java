@@ -18,13 +18,14 @@ public class RinexParser {
         System.out.println("    Calculo de Coordenadas de Satelites\n");
         System.out.println("==============================================\n\n");
         
-        String fileName = "C:\\Users\\Rogerio\\Desktop\\brdm2150.19p";
+        String fileName = "C:\\Users\\Rogerio\\Desktop\\coord\\processamento\\recorte.19p";
         
         readRINEX_Navigation_3(fileName);
         
         System.out.println("Arquivo: " + fileName + "\n\n");
         
-        calcCoordSat();        
+        calcCoordSat(); 
+        interpolarCoordSP3(); 
     }
     
     public static ArrayList<GNSSNavMsg> listaEfemeridesOriginal = new ArrayList<>();
@@ -198,10 +199,43 @@ public class RinexParser {
         return (  (6 * 24 + dataGNSS.getHour()) * 3600 + dataGNSS.getMin() * 60 + dataGNSS.getSec() );
     }
  
+    public static Double Interpolation_Lagrange(int x, ArrayList<Double> arrayx, ArrayList<Double> arrayy) {
+        
+        if (arrayx.size() != arrayy.size()) return Double.NaN;
+        
+        int n = arrayx.size();
+        int count, count2;
+
+//               x = 0;
+        double y = 0; //The corresponding value, f(x)=y
+        double numerator;
+        double denominator;  //The denominator
+
+        
+
+
+
+        //first Loop for the polynomial calculation
+        for (count = 0; count < n; count++) {
+            //Initialisation of variable
+            numerator = 1;
+            denominator = 1;
+
+            //second Loop for the polynomial calculation
+            for (count2 = 0; count2 < n; count2++) {
+                if (count2 != count) {
+                    numerator = numerator * (x - arrayx.get(count2));
+                    denominator = denominator * (arrayx.get(count) - arrayx.get(count2));
+                }
+            }
+            y = y + (numerator / denominator) * arrayy.get(count);
+        }
+        return (y);
+    }
+    
     private static void calcCoordSat() {
 //        GNSSDate dataObservacao = epocaAtual.getDateUTC();
 //        GNSSDate dataObservacao = listaEfemeridesAtual.get(0).getData();
-       
         
         
         for (int i = 0; i < listaEfemeridesAtual.size(); i++ ){// FIXME
@@ -237,7 +271,8 @@ public class RinexParser {
             double toc = calc_Toc(dataObservacao);
             
             if (listaEfemeridesAtual.get(i).getConstellation().equals(GNSSConstants.BEIDOU_LETTER)){
-                toc -= 14.0d;   
+                toc -= 14.0d;
+//                toe += 14.0d;
             }                        
             
             /* Erro do relogio no sistema de tempo do satelite */
@@ -328,6 +363,64 @@ public class RinexParser {
             
             System.out.println("Epoca: " + dataObservacao.toString() + "\n" + novaCoord.toString());
         }
+    }
+
+    private static void interpolarCoordSP3() {
+        System.out.println("INTERPOLANDO!!!");
+        
+//        int x = 18000;
+        int x   = 18900;        
+        int dia_semana = 0;
+
+        ArrayList<Double> arrayx = new ArrayList<>();
+        arrayx.add((dia_semana * 86400 + 4.50 * 3600));
+        arrayx.add((dia_semana * 86400 + 4.75 * 3600));
+        arrayx.add((dia_semana * 86400 + 5.00 * 3600));
+        arrayx.add((dia_semana * 86400 + 5.25 * 3600));
+        arrayx.add((dia_semana * 86400 + 5.50 * 3600));
+        arrayx.add((dia_semana * 86400 + 5.75 * 3600));
+        
+        // =====================================================================================
+        //                              Interpolando para X:
+        // =====================================================================================
+               
+        ArrayList<Double> arrayy = new ArrayList<>();   
+        arrayy.add(-10896.1927925292);
+        arrayy.add(-11846.8306779090);
+        arrayy.add(-12945.9817781000);
+        arrayy.add(-14179.0219006000);
+        arrayy.add(-15525.9906839000);
+        arrayy.add(-16962.1775668000);
+        
+        System.out.println("\nResultado em X: " + Interpolation_Lagrange(x, arrayx, arrayy));
+        
+        // =====================================================================================
+        //                              Interpolando para Y:
+        // =====================================================================================
+              
+        arrayy = new ArrayList<>();   
+        arrayy.add(15184.5056355764);
+        arrayy.add(13306.1986291445);
+        arrayy.add(11454.0395703000);
+        arrayy.add(9661.69595340000);
+        arrayy.add(7960.07674900000);
+        arrayy.add(6376.41668740000);
+        
+        System.out.println("\nResultado em Y: " + Interpolation_Lagrange(x, arrayx, arrayy));
+        
+        // =====================================================================================
+        //                              Interpolando para Z:
+        // =====================================================================================
+        
+        arrayy = new ArrayList<>();   
+        arrayy.add(-22940.7616400);
+        arrayy.add(-23624.9681300);
+        arrayy.add(-24015.0531744);
+        arrayy.add(-24106.1500698);
+        arrayy.add(-23897.1167937);
+        arrayy.add(-23390.5506176);
+        
+        System.out.println("\nResultado em Z: " + Interpolation_Lagrange(x, arrayx, arrayy));
     }
     
 }

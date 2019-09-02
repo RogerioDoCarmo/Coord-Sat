@@ -121,6 +121,107 @@ public class GNSSDate implements Comparable<GNSSDate> {
 //    };
 
     void addSeconds(double d) {
-        this.sec += d;
+        double temp = 0;
+        temp = getSec() + d;
+        if (temp == 60.0) {
+            addMinutes(1);
+            setSec(0);
+            return;
+        }
+        setSec(temp);
+    }
+
+    void addMinutes(int nMinutes) {
+        int temp = 0;
+
+        if (nMinutes > 0) {
+            temp = getMin() + nMinutes;
+            if (temp == 60) {
+                addHour(1);
+                setMin(0);
+                return;
+            }
+            setMin(temp);
+        } else {
+            
+            if (getMin() == 0) {
+                temp = 60 + nMinutes;
+                addHour(-1);
+            }               
+            else{
+                temp = getMin() + nMinutes;
+                //addHour(-1);
+            }
+                
+            setMin(temp);
+            
+            if (temp == 0) {
+                addHour(-1);
+                setMin(60 + nMinutes);
+                return;
+            }
+            setMin(temp);
+        }
+
+    }
+
+    /**
+     * @param hour the hour to set
+     */
+    public void setHour(int hour) {
+        this.hour = hour;
+    }
+
+    /**
+     * @param min the min to set
+     */
+    public void setMin(int min) {
+        this.min = min;
+    }
+
+    private void addHour(int nHours) {
+        int temp = 0;
+        if (nHours > 0) {
+            temp = getHour() + nHours;
+            if (temp == 24) {
+                temp = 0;
+                addDay_Week(1);
+                setHour(0);
+                return;
+            }
+            setHour(temp);
+        } else {
+            temp = getHour() + nHours;
+            if (temp == 0) {
+                temp = 0;
+                addDay_Week(-1);
+                setHour(0);
+                return;
+            }
+            setHour(temp);
+        }
+    }
+
+    private void addDay_Week(int nDays) {
+        int temp = 0;
+        temp = getDay_week()+ nDays;
+        if (temp == 7) {
+            temp = 0;
+            addDay_Month(1);
+            setDay_week(0);
+            return;
+        }
+        setMin(temp);
+    }
+
+    /**
+     * @param sec the sec to set
+     */
+    public void setSec(double sec) {
+        this.sec = sec;
+    }
+
+    private void addDay_Month(int aDay) {
+        this.month += aDay; // TODO: Tratar mudançan de mes
     }
 }

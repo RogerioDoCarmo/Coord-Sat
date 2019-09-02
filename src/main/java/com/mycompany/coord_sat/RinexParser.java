@@ -24,8 +24,10 @@ public class RinexParser {
         
         System.out.println("Arquivo: " + fileName + "\n\n");
         
-        calcCoordSat(); 
-        interpolarCoordSP3(); 
+        //calcCoordSat();
+        int fit_interval = 24;
+        calcCoordSat_Interval(0, -5, fit_interval);
+        //interpolarCoordSP3(); 
     }
     
     public static ArrayList<GNSSNavMsg> listaEfemeridesOriginal = new ArrayList<>();
@@ -233,10 +235,147 @@ public class RinexParser {
         return (y);
     }
     
+    private static void calcCoordSat_Interval(int pos_inicial, int incremento, int nn) {
+//        GNSSDate dataObservacao = epocaAtual.getDateUTC();
+//        GNSSDate dataObservacao = listaEfemeridesAtual.get(0).getData();
+        
+
+        GNSSDate dataObservacao = listaEfemeridesAtual.get(pos_inicial).getData();
+        
+        for (int i = 0; i < nn; i++ ){// FIXME                        
+            double a0 = listaEfemeridesAtual.get(pos_inicial).getAf0();                       
+            double a1 = listaEfemeridesAtual.get(pos_inicial).getAf1();                    
+            double a2 = listaEfemeridesAtual.get(pos_inicial).getAf2();
+            
+            double Crs = listaEfemeridesAtual.get(pos_inicial).getCrs();
+            double delta_n = listaEfemeridesAtual.get(pos_inicial).getDelta_n();
+            double m0 = listaEfemeridesAtual.get(pos_inicial).getM0();
+
+            double Cuc = listaEfemeridesAtual.get(pos_inicial).getCuc();
+            double e = listaEfemeridesAtual.get(pos_inicial).getE();
+            double Cus = listaEfemeridesAtual.get(pos_inicial).getCus();
+            double a = listaEfemeridesAtual.get(pos_inicial).getAsqrt() * listaEfemeridesAtual.get(pos_inicial).getAsqrt();
+
+            double toe = listaEfemeridesAtual.get(pos_inicial).getToe();         
+            double trs = listaEfemeridesAtual.get(pos_inicial).getTtx();           
+            
+            double Cic = listaEfemeridesAtual.get(pos_inicial).getCic();
+            double omega_0 = listaEfemeridesAtual.get(pos_inicial).get0mega_0();
+            double Cis = listaEfemeridesAtual.get(pos_inicial).getCis();
+
+            double io = listaEfemeridesAtual.get(pos_inicial).getI0();
+            double Crc = listaEfemeridesAtual.get(pos_inicial).getCrc();
+            double w = listaEfemeridesAtual.get(pos_inicial).getW();
+            double omega_v = listaEfemeridesAtual.get(pos_inicial).getOmega_v();
+            double idot = listaEfemeridesAtual.get(pos_inicial).getIDOT();
+
+            /* Tempo de transmisao do sinal */
+            double toc = calc_Toc(dataObservacao);
+            
+            if (listaEfemeridesAtual.get(pos_inicial).getConstellation().equals(GNSSConstants.BEIDOU_LETTER)){
+                toc -= 14.0d;
+//                toe += 14.0d;
+            }                        
+            
+            /* Erro do relogio no sistema de tempo do satelite */
+            double dts = a0 + a1 * (trs - toc) + a2 * (Math.pow(trs - toc, 2.0));
+            
+           double Tsat = toc - dts;
+           double delta_tk = Tsat - toe; // Tempo de propagacao do sinal
+
+            /* Considerando possível mudanca de semana */
+            if (delta_tk > 302400)
+                delta_tk = delta_tk - 604800;
+            else if (delta_tk < -302400)
+                delta_tk = delta_tk + 604800;
+
+            /*(4.9)*/
+            double GM;
+            if (listaEfemeridesAtual.get(pos_inicial).getConstellation().equals(GNSSConstants.BEIDOU_LETTER)){
+                GM = GNSSConstants.GM_BEIDOU;
+            } else {
+                GM = GNSSConstants.GM_GPS;
+            }
+            
+            double no = Math.sqrt(GM / (a*a*a)); // terceira lei de kepler
+
+            /*(4.10)*/
+            double n = no + delta_n; // movimento medio corrigido
+            double mk = m0 + n * delta_tk; // anomalia media
+
+            /* iteracao - anomalia excentrica */
+            /*(4.11)*/
+            double ek = mk;
+            for (int k = 0; k < 7; k++){
+                ek = mk + e * Math.sin(ek);
+            }
+
+            // Anomalia verdadeira
+            /*(4.12)*/
+            double sen_vk = ( (Math.sqrt(1 - (e * e)) ) * Math.sin(ek) )  / ( 1 - (e * Math.cos(ek)) );
+            double cos_vk = (Math.cos(ek) - e) / (1 - e * Math.cos(ek) );
+
+            /* Teste de Quadrante */
+            double vk = 0d;
+            if (((sen_vk >= 0) && (cos_vk >= 0)) || (sen_vk < 0) && (cos_vk >= 0)) { // I ou III quadrante
+                vk = Math.atan(sen_vk / cos_vk);
+            } else if (((sen_vk >= 0) && (cos_vk < 0)) || ((sen_vk < 0 ) && (cos_vk) < 0)) { //  II ou IV quadrante
+                vk = Math.atan(sen_vk / cos_vk) + 3.1415926535898; // FIXME Math.pi();
+            } else{
+//                Log.e("VK","Erro no ajuste do quadrante!");
+            }
+
+            //coordenadas planas do satelite
+            /*(4.13)*/
+            double fik = vk + w; // argumento da latitude
+            double delta_uk = Cuc * Math.cos(2 * fik) + Cus * Math.sin(2 * fik); // correcao do argumento da latitude
+            // latitude
+            double uk = fik + delta_uk; //argumento da latitude corrigido
+            /*(4.14)*/
+            double delta_rk = Crc * Math.cos(2 * fik) + Crs * Math.sin(2 * fik); //correcao do raio
+            double rk = a * (1 - e * Math.cos(ek)) + delta_rk; //raio corrigido
+
+            double delta_ik = Cic * Math.cos(2 * fik) + Cis * Math.sin(2 * fik); //correcao da inclinacao
+            double ik = io + idot * delta_tk + delta_ik; //inclinacao corrigida
+            /*(4.15)*/
+            // Coordenadas do satélite no plano orbital
+            double xk = rk * Math.cos(uk); //posicao x no plano orbital
+            double yk = rk * Math.sin(uk); //posicao y no plano orbital
+
+            // Coordenadas do satélite em 3D (WGS 84)
+            double WE;
+            if (listaEfemeridesAtual.get(pos_inicial).getConstellation().equals(GNSSConstants.BEIDOU_LETTER)){
+                WE = GNSSConstants.WE_BEIDOU;
+            }else {
+                WE = GNSSConstants.WE_GPS;
+            }
+            
+            double Omegak = omega_0 + omega_v * delta_tk - WE * Tsat;
+
+            // Coordenadas originais do satelites - Saida em Km para comparacao com efemerides precisas
+            double X = ((xk * Math.cos(Omegak)) - (yk * Math.sin(Omegak) * Math.cos(ik))) / 1000;
+            double Y = ((xk * Math.sin(Omegak)) + (yk * Math.cos(Omegak) * Math.cos(ik))) / 1000;
+            double Z = (yk * Math.sin(ik)) / 1000;
+
+            dts = dts / 1E6; // Segundos para microsegundos
+            
+            String PRN = listaEfemeridesAtual.get(pos_inicial).getPRN_FULL();
+            CoordenadaGNSS novaCoord = new CoordenadaGNSS(PRN,X,Y,Z,dts);
+            listaCoordAtual.add(novaCoord);
+            
+            System.out.println("Epoca: " + dataObservacao.toString() + "\n" + novaCoord.toString());
+            
+            //Next iteration
+            dataObservacao.addMinutes(incremento);
+        }
+    }
+
+    
     private static void calcCoordSat() {
 //        GNSSDate dataObservacao = epocaAtual.getDateUTC();
 //        GNSSDate dataObservacao = listaEfemeridesAtual.get(0).getData();
         
+
         
         for (int i = 0; i < listaEfemeridesAtual.size(); i++ ){// FIXME
             GNSSDate dataObservacao = listaEfemeridesAtual.get(i).getData();

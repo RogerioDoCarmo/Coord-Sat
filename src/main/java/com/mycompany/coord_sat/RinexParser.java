@@ -12,6 +12,10 @@ import java.util.ArrayList;
  */
 public class RinexParser {
     
+   
+    static int flag_min_seconds = 0; // 0 == minutes; 1 == seconds
+    static int flag_gnss = 2; // 0 == GPS, 1 = Galileo, 2 - Beidou
+    
     public static void main (String[] args) throws IOException {
         
         System.out.println("==============================================\n");
@@ -25,8 +29,17 @@ public class RinexParser {
         System.out.println("Arquivo: " + fileName + "\n\n");
         
         //calcCoordSat();
-        int fit_interval = 24;
-        calcCoordSat_Interval(0, -5, fit_interval);
+        
+        int fit_interval = 24; // 0 == 24
+        int incremento = 5; // 0 == 24
+        if (flag_min_seconds == 1) { // seconds
+            fit_interval = 20;
+            incremento = 15;           
+        }
+                        
+        calcCoordSat_Interval(flag_gnss,  incremento, fit_interval);
+        System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        calcCoordSat_Interval(flag_gnss, -incremento, fit_interval);
         //interpolarCoordSP3(); 
     }
     
@@ -241,6 +254,9 @@ public class RinexParser {
         
 
         GNSSDate dataObservacao = listaEfemeridesAtual.get(pos_inicial).getData();
+        dataObservacao.setHour(12);
+        dataObservacao.setMin(0);
+        dataObservacao.setSec(0);
         
         for (int i = 0; i < nn; i++ ){// FIXME                        
             double a0 = listaEfemeridesAtual.get(pos_inicial).getAf0();                       
@@ -363,10 +379,16 @@ public class RinexParser {
             CoordenadaGNSS novaCoord = new CoordenadaGNSS(PRN,X,Y,Z,dts);
             listaCoordAtual.add(novaCoord);
             
-            System.out.println("Epoca: " + dataObservacao.toString() + "\n" + novaCoord.toString());
+            int epch = i + 1;
+            System.out.println("Epoca nº:" + epch + " " + dataObservacao.toString() + "\n" + novaCoord.toString());
             
             //Next iteration
-            dataObservacao.addMinutes(incremento);
+            if (flag_min_seconds == 0) {
+                dataObservacao.addMinutes(incremento);
+            }else{
+                dataObservacao.addSeconds(incremento);
+            }
+            
         }
     }
 
@@ -500,7 +522,8 @@ public class RinexParser {
             CoordenadaGNSS novaCoord = new CoordenadaGNSS(PRN,X,Y,Z,dts);
             listaCoordAtual.add(novaCoord);
             
-            System.out.println("Epoca: " + dataObservacao.toString() + "\n" + novaCoord.toString());
+            int epch = i + 1;
+            System.out.println("Epoca: nº " + epch + " " + dataObservacao.toString() + "\n" + novaCoord.toString());
         }
     }
 

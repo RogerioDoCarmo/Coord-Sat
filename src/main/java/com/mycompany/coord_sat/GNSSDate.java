@@ -121,14 +121,31 @@ public class GNSSDate implements Comparable<GNSSDate> {
 //    };
 
     void addSeconds(double d) {
-        double temp = 0;
-        temp = getSec() + d;
-        if (temp == 60.0) {
-            addMinutes(1);
-            setSec(0);
-            return;
+        if (d > 0) {
+            double temp = 0;
+            temp = getSec() + d;
+            if (temp == 60.0) {
+                addMinutes(1);
+                setSec(0);
+                return;
+            }
+            setSec(temp);
+        } else {
+            double temp = 0;
+            temp = getSec() + d;
+            if (getSec() == 0) {
+                temp = 60.0 + d;
+                addMinutes(-1);
+                setSec(temp);
+                return;
+            }               
+            else{
+                temp = getSec() + d;
+                //addHour(-1);
+            }
+                
+             setSec(temp);
         }
-        setSec(temp);
     }
 
     void addMinutes(int nMinutes) {
@@ -147,6 +164,8 @@ public class GNSSDate implements Comparable<GNSSDate> {
             if (getMin() == 0) {
                 temp = 60 + nMinutes;
                 addHour(-1);
+                setMin(temp);
+                return;
             }               
             else{
                 temp = getMin() + nMinutes;
@@ -155,12 +174,12 @@ public class GNSSDate implements Comparable<GNSSDate> {
                 
             setMin(temp);
             
-            if (temp == 0) {
-                addHour(-1);
-                setMin(60 + nMinutes);
-                return;
-            }
-            setMin(temp);
+//            if (temp == 0) {
+//                addHour(-1);
+//                setMin(60 + nMinutes);
+//                return;
+//            }
+//            setMin(temp);
         }
 
     }

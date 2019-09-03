@@ -5,16 +5,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
 /**
  *
  * @author Rogerio
  */
 public class RinexParser {
-    
-   
-    static int flag_min_seconds = 0; // 0 == minutes; 1 == seconds
-    static int flag_gnss = 2; // 0 == GPS, 1 = Galileo, 2 - Beidou
+      
+    static int flag_min_seconds = 1; // 0 == minutes; 1 == seconds
+    static int flag_gnss = 1; // 0 == GPS, 1 = Galileo, 2 - Beidou
+    static int grau_lagrange = 6;
     
     public static void main (String[] args) throws IOException {
         
@@ -31,16 +30,17 @@ public class RinexParser {
         //calcCoordSat();
         
         int fit_interval = 24; // 0 == 24
-        int incremento = 5; // 0 == 24
+        int incremento = 5; // 0 == 5
         if (flag_min_seconds == 1) { // seconds
             fit_interval = 20;
             incremento = 15;           
-        }
-                        
+        }               
+                
+        fit_interval = 3; // Numero de epocas
         calcCoordSat_Interval(flag_gnss,  incremento, fit_interval);
         System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-        calcCoordSat_Interval(flag_gnss, -incremento, fit_interval);
-        //interpolarCoordSP3(); 
+//        calcCoordSat_Interval(flag_gnss, -incremento, fit_interval);
+        interpolateCoordSat_Interval(flag_gnss,incremento, fit_interval); 
     }
     
     public static ArrayList<GNSSNavMsg> listaEfemeridesOriginal = new ArrayList<>();
@@ -49,11 +49,14 @@ public class RinexParser {
     public static ArrayList<GNSSNavMsg> listaEfemeridesAtual = new ArrayList<>();
     public static ArrayList<GNSSMeasurement> listaMedicoesAtual = new ArrayList<>();
     public static ArrayList<CoordenadaGNSS> listaCoordAtual = new ArrayList<>();
+    
+    public static ArrayList<CoordenadaGNSS> listaCoordInterpoladas = new ArrayList<>();
+    
     public static ArrayList<Integer> listaPRNsAtual = new ArrayList<>();
     public static ArrayList<EpocaGNSS> listaEpocas = new ArrayList<>();
         
     public static EpocaGNSS epocaAtual;
-    public static GNSSDate dataAtual;
+    public static GNSSDate  dataAtual;
         
     public static String readRINEX_Navigation_3(String fileName) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -214,8 +217,7 @@ public class RinexParser {
         return (  (6 * 24 + dataGNSS.getHour()) * 3600 + dataGNSS.getMin() * 60 + dataGNSS.getSec() );
     }
  
-    public static Double Interpolation_Lagrange(int x, ArrayList<Double> arrayx, ArrayList<Double> arrayy) {
-        
+    public static Double Interpolation_Lagrange(double x, ArrayList<Double> arrayx, ArrayList<Double> arrayy) {        
         if (arrayx.size() != arrayy.size()) return Double.NaN;
         
         int n = arrayx.size();
@@ -224,19 +226,12 @@ public class RinexParser {
 //               x = 0;
         double y = 0; //The corresponding value, f(x)=y
         double numerator;
-        double denominator;  //The denominator
-
+        double denominator;
         
-
-
-
-        //first Loop for the polynomial calculation
         for (count = 0; count < n; count++) {
-            //Initialisation of variable
             numerator = 1;
             denominator = 1;
 
-            //second Loop for the polynomial calculation
             for (count2 = 0; count2 < n; count2++) {
                 if (count2 != count) {
                     numerator = numerator * (x - arrayx.get(count2));
@@ -248,17 +243,125 @@ public class RinexParser {
         return (y);
     }
     
+    private static void interpolateCoordSat_Interval(int pos_inicial, int incremento, int fit_interval) {
+       
+        System.out.println("Interpolandooooo");
+        
+        GNSSDate dataObservacao = listaEfemeridesAtual.get(pos_inicial).getData();
+        dataObservacao.setHour(12);
+        dataObservacao.setMin(0);
+        dataObservacao.setSec(0);        
+        
+        // Array X: TOCs das coordenadas interpoladas
+        ArrayList<Double> desired_Xs_Tocs = new ArrayList<>();
+        // 1
+        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
+        dataObservacao.addSeconds(incremento); // + 15s
+        // 2
+        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
+        dataObservacao.addSeconds(incremento); // + 15s
+        // 3
+        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
+        dataObservacao.addSeconds(incremento); // + 15s
+        // 4
+        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
+        dataObservacao.addSeconds(incremento); // + 15s
+        // 5
+        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
+        dataObservacao.addSeconds(incremento); // + 15s
+        // 6
+        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
+        dataObservacao.addSeconds(incremento); // + 15s
+        
+        // ==================================================== //
+        
+        // Array Y: X Coordinates
+        int dia_semana = 6;
+        ArrayList<Double> arrayx = new ArrayList<>();
+        arrayx.add((dia_semana * 86400 + 0.0833333 * 3600));
+        arrayx.add((dia_semana * 86400 + 0.166667 * 3600));
+        arrayx.add((dia_semana * 86400 + 0.25 * 3600));
+        arrayx.add((dia_semana * 86400 + 0.333333 * 3600));
+        arrayx.add((dia_semana * 86400 + 0.416667 * 3600));
+        arrayx.add((dia_semana * 86400 + 0.50 * 3600));
+        
+        // Array Y: X Coordinates
+        ArrayList<Double> arrayy_X = new ArrayList<>();
+        // 1
+        arrayy_X.add(-9420.615757 );
+        // 2
+        arrayy_X.add(-10000.353526);
+        // 3
+        arrayy_X.add(-10560.052574);
+        // 4
+        arrayy_X.add(-11098.879616);
+        // 5
+        arrayy_X.add(-11616.070414);
+        // 6
+        arrayy_X.add(-12110.932167);
+        
+        // Array Y: Y Coordinates
+        ArrayList<Double> arrayy_Y = new ArrayList<>();
+        // 1
+        arrayy_Y.add(18435.980644);
+        // 2
+        arrayy_Y.add(18683.219171);
+        // 3
+        arrayy_Y.add(18938.491514);
+        // 4
+        arrayy_Y.add(19200.671300);
+        // 5
+        arrayy_Y.add(19468.590931);
+        // 6
+        arrayy_Y.add(19741.045718);
+        
+        // Array Z: Z Coordinates
+        ArrayList<Double> arrayy_Z = new ArrayList<>();
+        // 1
+        arrayy_Z.add(21157.339548);
+        // 2
+        arrayy_Z.add(20668.660607);
+        // 3
+        arrayy_Z.add(20151.398442);
+        // 4
+        arrayy_Z.add(19606.267987);
+        // 5
+        arrayy_Z.add(19034.022723);
+        // 6
+        arrayy_Z.add(18435.453648 );
+        
+//        dataObservacao.setMin(0);
+        for (int i = 0; i < fit_interval; i++) {
+            String PRN = listaEfemeridesAtual.get(pos_inicial).getPRN_FULL();
+
+            dataObservacao.setHour(12);
+            dataObservacao.setMin(0);
+            dataObservacao.setSec(0);
+            dataObservacao.addSeconds(incremento);
+
+            double X = Interpolation_Lagrange(desired_Xs_Tocs.get(i), arrayx, arrayy_X);
+            double Y = Interpolation_Lagrange(desired_Xs_Tocs.get(i), arrayx, arrayy_Y);
+            double Z = Interpolation_Lagrange(desired_Xs_Tocs.get(i), arrayx, arrayy_Z);
+
+            CoordenadaGNSS novaCoord = new CoordenadaGNSS(PRN, X, Y, Z, Double.NaN);
+            listaCoordInterpoladas.add(novaCoord);
+            
+            int epch = i + 1;
+            System.out.println("Epoca nº: " + epch + " " + dataObservacao.toString() + "\n" + novaCoord.toString());
+        }
+        
+    }
+    
     private static void calcCoordSat_Interval(int pos_inicial, int incremento, int nn) {
 //        GNSSDate dataObservacao = epocaAtual.getDateUTC();
 //        GNSSDate dataObservacao = listaEfemeridesAtual.get(0).getData();
         
-
         GNSSDate dataObservacao = listaEfemeridesAtual.get(pos_inicial).getData();
         dataObservacao.setHour(12);
         dataObservacao.setMin(0);
         dataObservacao.setSec(0);
         
-        for (int i = 0; i < nn; i++ ){// FIXME                        
+        for (int i = 0; i < nn; i++ ){                        
             double a0 = listaEfemeridesAtual.get(pos_inicial).getAf0();                       
             double a1 = listaEfemeridesAtual.get(pos_inicial).getAf1();                    
             double a2 = listaEfemeridesAtual.get(pos_inicial).getAf2();
@@ -385,7 +488,7 @@ public class RinexParser {
             //Next iteration
             if (flag_min_seconds == 0) {
                 dataObservacao.addMinutes(incremento);
-            }else{
+            }else{ // flag_min_seconds == 1
                 dataObservacao.addSeconds(incremento);
             }
             

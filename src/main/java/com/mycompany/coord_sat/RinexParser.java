@@ -19,7 +19,7 @@ public class RinexParser {
     static final int INCREMENT_SECONDS = 1;
     
     static int flag_min_seconds = INCREMENT_SECONDS; // 0 == minutes; 1 == seconds
-    static int flag_gnss = PROCESS_GALILEO; // 0 == GPS, 1 = Galileo, 2 - Beidou
+    static int flag_gnss = PROCESS_GPS; // 0 == GPS, 1 = Galileo, 2 - Beidou
     static final int LAGRANGE_DEGREE = 6;
     
     public static double convert_HMS_TO_HOURS(double hour, double minutes, double seconds) {
@@ -402,6 +402,30 @@ public class RinexParser {
         ArrayList<Double> arrayy_Y = new ArrayList<>();
         // Array Z: Z Coordinates
         ArrayList<Double> arrayy_Z = new ArrayList<>();
+       
+        if (flag_gnss == PROCESS_GPS) { // Processing G02 Satellite
+            arrayy_X.add(-17715.316069);
+            arrayy_X.add(-17448.582641);
+            arrayy_X.add(-17184.938287);
+            arrayy_X.add(-16925.694775);
+            arrayy_X.add(-16672.106105);
+            arrayy_X.add(-16425.362538);
+
+            arrayy_Y.add(7443.418342);
+            arrayy_Y.add(6769.741861);
+            arrayy_Y.add(6074.034482);
+            arrayy_Y.add(5357.520386);
+            arrayy_Y.add(4621.515721);
+            arrayy_Y.add(3867.423578);
+
+            arrayy_Z.add(-17668.023889);
+            arrayy_Z.add(-18183.683663);
+            arrayy_Z.add(-18662.635467);
+            arrayy_Z.add(-19103.878165);
+            arrayy_Z.add(-19506.489236);
+            arrayy_Z.add(-19869.627178);
+        }
+        
         
         if (flag_gnss == PROCESS_GALILEO) { // Processing E02 Satellite
             arrayy_X.add(-17083.811556);
@@ -424,6 +448,29 @@ public class RinexParser {
             arrayy_Z.add(23223.045218);
             arrayy_Z.add(23519.954737);
             arrayy_Z.add(23784.341841);
+        }
+        
+        if (flag_gnss == PROCESS_BEIDOU) { // Processing C12 Satellite
+            arrayy_X.add(X);
+            arrayy_X.add(X);
+            arrayy_X.add(X);
+            arrayy_X.add(X);
+            arrayy_X.add(X);
+            arrayy_X.add(X);
+
+            arrayy_Y.add(X);
+            arrayy_Y.add(X);
+            arrayy_Y.add(X);
+            arrayy_Y.add(X);
+            arrayy_Y.add(X);
+            arrayy_Y.add(X);
+
+            arrayy_Z.add(X);
+            arrayy_Z.add(X);
+            arrayy_Z.add(X);
+            arrayy_Z.add(X);
+            arrayy_Z.add(X);
+            arrayy_Z.add(X);
         }
                 
 //        dataObservacao.setMin(0);

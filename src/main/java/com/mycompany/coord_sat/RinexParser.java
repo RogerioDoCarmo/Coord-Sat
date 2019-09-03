@@ -19,7 +19,7 @@ public class RinexParser {
     static final int INCREMENT_SECONDS = 1;
     
     static int flag_min_seconds = INCREMENT_SECONDS; // 0 == minutes; 1 == seconds
-    static int flag_gnss = PROCESS_GPS; // 0 == GPS, 1 = Galileo, 2 - Beidou
+    static int flag_gnss = PROCESS_GALILEO; // 0 == GPS, 1 = Galileo, 2 - Beidou
     static final int LAGRANGE_DEGREE = 6;
     
     public static double convert_HMS_TO_HOURS(double hour, double minutes, double seconds) {
@@ -45,12 +45,12 @@ public class RinexParser {
         
         int fit_interval = 24; // 0 == 24
         int incremento = 5; // 0 == 5
-        if (flag_min_seconds == 1) { // seconds
+        if (flag_min_seconds == INCREMENT_SECONDS) { // seconds
             fit_interval = 20;
             incremento = 15;           
         }               
                 
-        fit_interval = 6; // Numero de epocas
+        //fit_interval = 6; // Numero de epocas
         calcCoordSat_Interval(flag_gnss,  incremento, fit_interval);
         System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         //calcCoordSat_Interval(flag_gnss, -incremento, fit_interval);
@@ -122,7 +122,7 @@ public class RinexParser {
                         listaCoordPrecisasLidas.add(novaCoord);
 
 //                int epch = i + 1;
-                        System.out.println("Epoca nº " + cont + ": " + data.toString() + "\n" + novaCoord.toString());
+                        System.out.println("Epoca nº: " + cont + " " + data.toString() + "\n" + novaCoord.toString());
                         
                     }
 
@@ -355,82 +355,77 @@ public class RinexParser {
         
         // Array X: TOCs das coordenadas interpoladas
         ArrayList<Double> desired_Xs_Tocs = new ArrayList<>();
-        // 1
-        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
-        dataObservacao.addSeconds(incremento); // + 15s
-        // 2
-        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
-        dataObservacao.addSeconds(incremento); // + 15s
-        // 3
-        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
-        dataObservacao.addSeconds(incremento); // + 15s
-        // 4
-        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
-        dataObservacao.addSeconds(incremento); // + 15s
-        // 5
-        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
-        dataObservacao.addSeconds(incremento); // + 15s
-        // 6
-        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
-        dataObservacao.addSeconds(incremento); // + 15s
+        
+        for (int i = 0; i < fit_interval; i++) {
+            desired_Xs_Tocs.add(calc_Toc(dataObservacao));
+            dataObservacao.addSeconds(incremento); // + 15s
+        }
+        
+//        // 1
+//        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
+//        dataObservacao.addSeconds(incremento); // + 15s
+//        // 2
+//        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
+//        dataObservacao.addSeconds(incremento); // + 15s
+//        // 3
+//        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
+//        dataObservacao.addSeconds(incremento); // + 15s
+//        // 4
+//        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
+//        dataObservacao.addSeconds(incremento); // + 15s
+//        // 5
+//        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
+//        dataObservacao.addSeconds(incremento); // + 15s
+//        // 6
+//        desired_Xs_Tocs.add(calc_Toc(dataObservacao));
+//        dataObservacao.addSeconds(incremento); // + 15s
         
         // ==================================================== //
         
         // Array Y: X Coordinates
         int dia_semana = 6;
         ArrayList<Double> arrayx = new ArrayList<>();
-        arrayx.add((dia_semana * 86400 + 11.8333 * 3600));
-        arrayx.add((dia_semana * 86400 + 11.9167 * 3600));
-        arrayx.add((dia_semana * 86400 + 12.0000 * 3600));
-        arrayx.add((dia_semana * 86400 + 12.0833 * 3600));
-        arrayx.add((dia_semana * 86400 + 12.1667 * 3600));
-        arrayx.add((dia_semana * 86400 + 12.2500 * 3600));
+        
+//        for (int i = 0; i < LAGRANGE_DEGREE; i++) {
+//            
+//        }                
+        arrayx.add((dia_semana * 86400d + convert_HMS_TO_HOURS(11,50, 00) * 3600d));
+        arrayx.add((dia_semana * 86400d + convert_HMS_TO_HOURS(11,55, 00) * 3600d));
+        arrayx.add((dia_semana * 86400d + convert_HMS_TO_HOURS(12,00, 00) * 3600d));
+        arrayx.add((dia_semana * 86400d + convert_HMS_TO_HOURS(12,05, 00) * 3600d));
+        arrayx.add((dia_semana * 86400d + convert_HMS_TO_HOURS(12,10, 00) * 3600d));
+        arrayx.add((dia_semana * 86400d + convert_HMS_TO_HOURS(12,15, 00) * 3600d));
         
         // Array Y: X Coordinates
         ArrayList<Double> arrayy_X = new ArrayList<>();
-        // 1
-        arrayy_X.add(-17083.811556);//
-        // 2
-        arrayy_X.add(-16442.437204);//
-        // 3
-        arrayy_X.add(-15795.535845);//
-        // 4
-        arrayy_X.add(-15144.534153);// 
-        // 5
-        arrayy_X.add(-14490.861126);//
-        // 6
-        arrayy_X.add(-13835.943305);//
-        
         // Array Y: Y Coordinates
         ArrayList<Double> arrayy_Y = new ArrayList<>();
-        // 1
-        arrayy_Y.add(18435.980644);
-        // 2
-        arrayy_Y.add(18683.219171);
-        // 3
-        arrayy_Y.add(18938.491514);
-        // 4
-        arrayy_Y.add(19200.671300);
-        // 5
-        arrayy_Y.add(19468.590931);
-        // 6
-        arrayy_Y.add(19741.045718);
-        
         // Array Z: Z Coordinates
         ArrayList<Double> arrayy_Z = new ArrayList<>();
-        // 1
-        arrayy_Z.add(21157.339548);
-        // 2
-        arrayy_Z.add(20668.660607);
-        // 3
-        arrayy_Z.add(20151.398442);
-        // 4
-        arrayy_Z.add(19606.267987);
-        // 5
-        arrayy_Z.add(19034.022723);
-        // 6
-        arrayy_Z.add(18435.453648 );
         
+        if (flag_gnss == PROCESS_GALILEO) { // Processing E02 Satellite
+            arrayy_X.add(-17083.811556);
+            arrayy_X.add(-16442.437204);
+            arrayy_X.add(-15795.535845);
+            arrayy_X.add(-15144.534153);
+            arrayy_X.add(-14490.861126);
+            arrayy_X.add(-13835.943305);
+
+            arrayy_Y.add(-9705.759959);
+            arrayy_Y.add(-9909.594633);
+            arrayy_Y.add(-10132.656156);
+            arrayy_Y.add(-10374.953574);
+            arrayy_Y.add(-10636.416049);
+            arrayy_Y.add(-10916.892927);
+
+            arrayy_Z.add(22141.506878);
+            arrayy_Z.add(22533.344685);
+            arrayy_Z.add(22894.023626);
+            arrayy_Z.add(23223.045218);
+            arrayy_Z.add(23519.954737);
+            arrayy_Z.add(23784.341841);
+        }
+                
 //        dataObservacao.setMin(0);
         for (int i = 0; i < fit_interval; i++) {
             String PRN = listaEfemeridesAtual.get(pos_inicial).getPRN_FULL();
@@ -584,7 +579,7 @@ public class RinexParser {
             listaCoordAtual.add(novaCoord);
             
             int epch = i + 1;
-            System.out.println("Epoca nº:" + epch + " " + dataObservacao.toString() + "\n" + novaCoord.toString());
+            System.out.println("Epoca nº: " + epch + " " + dataObservacao.toString() + "\n" + novaCoord.toString());
             
             //Next iteration
             if (flag_min_seconds == 0) {
@@ -727,7 +722,7 @@ public class RinexParser {
             listaCoordAtual.add(novaCoord);
             
             int epch = i + 1;
-            System.out.println("Epoca: nº " + epch + " " + dataObservacao.toString() + "\n" + novaCoord.toString());
+            System.out.println("Epoca nº: " + epch + " " + dataObservacao.toString() + "\n" + novaCoord.toString());
         }
     }
 

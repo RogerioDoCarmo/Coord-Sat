@@ -19,7 +19,7 @@ public class RinexParser {
     static final int INCREMENT_SECONDS = 1;
     
     static int flag_min_seconds = INCREMENT_SECONDS; // 0 == minutes; 1 == seconds
-    static int flag_gnss = PROCESS_GPS; // 0 == GPS, 1 = Galileo, 2 - Beidou
+    static int flag_gnss = PROCESS_BEIDOU; // 0 == GPS, 1 = Galileo, 2 - Beidou
     static final int LAGRANGE_DEGREE = 6;
     
     public static double convert_HMS_TO_HOURS(double hour, double minutes, double seconds) {
@@ -451,26 +451,26 @@ public class RinexParser {
         }
         
         if (flag_gnss == PROCESS_BEIDOU) { // Processing C12 Satellite
-            arrayy_X.add(X);
-            arrayy_X.add(X);
-            arrayy_X.add(X);
-            arrayy_X.add(X);
-            arrayy_X.add(X);
-            arrayy_X.add(X);
+            arrayy_X.add(13517.998236);
+            arrayy_X.add(13684.308117);
+            arrayy_X.add(13868.060748);
+            arrayy_X.add(14069.084789);
+            arrayy_X.add(14287.116731);
+            arrayy_X.add(14521.801699);
 
-            arrayy_Y.add(X);
-            arrayy_Y.add(X);
-            arrayy_Y.add(X);
-            arrayy_Y.add(X);
-            arrayy_Y.add(X);
-            arrayy_Y.add(X);
+            arrayy_Y.add(-8963.582936);
+            arrayy_Y.add(-8202.517467);
+            arrayy_Y.add(-7439.578969);
+            arrayy_Y.add(-6676.411543);
+            arrayy_Y.add(-5914.650354);
+            arrayy_Y.add(-5155.915752);
 
-            arrayy_Z.add(X);
-            arrayy_Z.add(X);
-            arrayy_Z.add(X);
-            arrayy_Z.add(X);
-            arrayy_Z.add(X);
-            arrayy_Z.add(X);
+            arrayy_Z.add(22778.533211);
+            arrayy_Z.add(22963.402531);
+            arrayy_Z.add(23110.596762);
+            arrayy_Z.add(23219.868055);
+            arrayy_Z.add(23291.030325);
+            arrayy_Z.add(23323.959593);
         }
                 
 //        dataObservacao.setMin(0);

@@ -11,12 +11,23 @@ import java.util.ArrayList;
  */
 public class RinexParser {
       
-    static int flag_min_seconds = 1; // 0 == minutes; 1 == seconds
-    static int flag_gnss = 1; // 0 == GPS, 1 = Galileo, 2 - Beidou
-    static int grau_lagrange = 6;
+    static final int PROCESS_GPS = 0;
+    static final int PROCESS_GALILEO = 1;
+    static final int PROCESS_BEIDOU = 2;
+    
+    static final int INCREMENT_MINUTES = 0;
+    static final int INCREMENT_SECONDS = 1;
+    
+    static int flag_min_seconds = INCREMENT_SECONDS; // 0 == minutes; 1 == seconds
+    static int flag_gnss = PROCESS_GPS; // 0 == GPS, 1 = Galileo, 2 - Beidou
+    static final int LAGRANGE_DEGREE = 6;
+    
+    public static double convert_HMS_TO_HOURS(double hour, double minutes, double seconds) {
+        return ( hour + minutes*(1d/60d) + seconds*(1d/3600d));
+    }
     
     public static void main (String[] args) throws IOException {
-        
+
         System.out.println("==============================================\n");
         System.out.println("    Calculo de Coordenadas de Satelites\n");
         System.out.println("==============================================\n\n");
@@ -28,23 +39,22 @@ public class RinexParser {
         System.out.println("Arquivo: " + fileName + "\n\n");
         
         String fileNameSP3 = "C:\\Users\\Rogerio\\Desktop\\coord\\processamento\\COM20646.EPH";
-        read_sp3_cut(fileNameSP3);
+        //read_sp3_cut(fileNameSP3);
                
-        
         //calcCoordSat();
         
         int fit_interval = 24; // 0 == 24
         int incremento = 5; // 0 == 5
         if (flag_min_seconds == 1) { // seconds
-            fit_interval = 30;
-            incremento = 30;           
+            fit_interval = 20;
+            incremento = 15;           
         }               
                 
-        //fit_interval = 3; // Numero de epocas
-//        calcCoordSat_Interval(flag_gnss,  incremento, fit_interval);
+        fit_interval = 6; // Numero de epocas
+        calcCoordSat_Interval(flag_gnss,  incremento, fit_interval);
         System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-//        calcCoordSat_Interval(flag_gnss, -incremento, fit_interval);
-//        interpolateCoordSat_Interval(flag_gnss,incremento, fit_interval); 
+        //calcCoordSat_Interval(flag_gnss, -incremento, fit_interval);
+        interpolateCoordSat_Interval(flag_gnss,incremento, fit_interval); 
     }
     
     public static String read_sp3_cut(String fileName) throws IOException {
@@ -369,27 +379,27 @@ public class RinexParser {
         // Array Y: X Coordinates
         int dia_semana = 6;
         ArrayList<Double> arrayx = new ArrayList<>();
-        arrayx.add((dia_semana * 86400 + 0.0833333 * 3600));
-        arrayx.add((dia_semana * 86400 + 0.166667 * 3600));
-        arrayx.add((dia_semana * 86400 + 0.25 * 3600));
-        arrayx.add((dia_semana * 86400 + 0.333333 * 3600));
-        arrayx.add((dia_semana * 86400 + 0.416667 * 3600));
-        arrayx.add((dia_semana * 86400 + 0.50 * 3600));
+        arrayx.add((dia_semana * 86400 + 11.8333 * 3600));
+        arrayx.add((dia_semana * 86400 + 11.9167 * 3600));
+        arrayx.add((dia_semana * 86400 + 12.0000 * 3600));
+        arrayx.add((dia_semana * 86400 + 12.0833 * 3600));
+        arrayx.add((dia_semana * 86400 + 12.1667 * 3600));
+        arrayx.add((dia_semana * 86400 + 12.2500 * 3600));
         
         // Array Y: X Coordinates
         ArrayList<Double> arrayy_X = new ArrayList<>();
         // 1
-        arrayy_X.add(-9420.615757 );
+        arrayy_X.add(-17083.811556);//
         // 2
-        arrayy_X.add(-10000.353526);
+        arrayy_X.add(-16442.437204);//
         // 3
-        arrayy_X.add(-10560.052574);
+        arrayy_X.add(-15795.535845);//
         // 4
-        arrayy_X.add(-11098.879616);
+        arrayy_X.add(-15144.534153);// 
         // 5
-        arrayy_X.add(-11616.070414);
+        arrayy_X.add(-14490.861126);//
         // 6
-        arrayy_X.add(-12110.932167);
+        arrayy_X.add(-13835.943305);//
         
         // Array Y: Y Coordinates
         ArrayList<Double> arrayy_Y = new ArrayList<>();
@@ -428,7 +438,7 @@ public class RinexParser {
             dataObservacao.setHour(12);
             dataObservacao.setMin(0);
             dataObservacao.setSec(0);
-            dataObservacao.addSeconds(incremento);
+            //dataObservacao.addSeconds(incremento);
 
             double X = Interpolation_Lagrange(desired_Xs_Tocs.get(i), arrayx, arrayy_X);
             double Y = Interpolation_Lagrange(desired_Xs_Tocs.get(i), arrayx, arrayy_Y);
@@ -438,7 +448,7 @@ public class RinexParser {
             listaCoordInterpoladas.add(novaCoord);
             
             int epch = i + 1;
-            System.out.println("Epoca nº: " + epch + " " + dataObservacao.toString() + "\n" + novaCoord.toString());
+            System.out.println("Epoca nº: " + epch + " " + desired_Xs_Tocs.get(i) + "\n" + novaCoord.toString());
         }
         
     }

@@ -21,26 +21,116 @@ public class RinexParser {
         System.out.println("    Calculo de Coordenadas de Satelites\n");
         System.out.println("==============================================\n\n");
         
-        String fileName = "C:\\Users\\Rogerio\\Desktop\\coord\\processamento\\recorte.19p";
+        String fileName    = "C:\\Users\\Rogerio\\Desktop\\coord\\processamento\\recorte.19p";
         
         readRINEX_Navigation_3(fileName);
         
         System.out.println("Arquivo: " + fileName + "\n\n");
+        
+        String fileNameSP3 = "C:\\Users\\Rogerio\\Desktop\\coord\\processamento\\COM20646.EPH";
+        read_sp3_cut(fileNameSP3);
+               
         
         //calcCoordSat();
         
         int fit_interval = 24; // 0 == 24
         int incremento = 5; // 0 == 5
         if (flag_min_seconds == 1) { // seconds
-            fit_interval = 20;
-            incremento = 15;           
+            fit_interval = 30;
+            incremento = 30;           
         }               
                 
-        fit_interval = 3; // Numero de epocas
-        calcCoordSat_Interval(flag_gnss,  incremento, fit_interval);
+        //fit_interval = 3; // Numero de epocas
+//        calcCoordSat_Interval(flag_gnss,  incremento, fit_interval);
         System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 //        calcCoordSat_Interval(flag_gnss, -incremento, fit_interval);
-        interpolateCoordSat_Interval(flag_gnss,incremento, fit_interval); 
+//        interpolateCoordSat_Interval(flag_gnss,incremento, fit_interval); 
+    }
+    
+    public static String read_sp3_cut(String fileName) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+
+        StringBuilder sb = new StringBuilder();
+        
+        // PULANDO O CABEÇALHO
+        String mLine = reader.readLine();
+        int cont = 0;
+        while( cont < 23) {
+            mLine = reader.readLine();
+            cont++;
+        }
+              
+        String sub = "";
+
+        cont = 1;
+        mLine = reader.readLine();
+//        while ( (mLine = reader.readLine()) != null ){
+        while ( !mLine.equals("EOF") ){
+//            mLine = reader.readLine();
+
+            if (mLine.isEmpty()) break; // Last line of the file
+                        
+//first line - epoch of satellite clock (toc)
+//======================================================================================================            
+            try {
+                int    year    = Integer.valueOf(mLine.substring( 3,  7).trim());
+                int    month   = Integer.valueOf(mLine.substring( 8, 10).trim());
+                int    day     = Integer.valueOf(mLine.substring(11, 13).trim());
+                int    hour    = Integer.valueOf(mLine.substring(14, 16).trim());
+                int    minutes = Integer.valueOf(mLine.substring(17, 19).trim());
+                double seconds = Double .valueOf(mLine.substring(20, 31).trim());
+
+                GNSSDate data = new GNSSDate(year, month, day, hour, minutes, seconds);
+//              efemeride.setGNSSDate(data);
+
+//                mLine = reader.readLine();
+                while ( (mLine = reader.readLine()).startsWith("P") ) {
+//                    mLine = reader.readLine();
+
+                    // Jump SBAS or Glonas messages
+                    if (mLine.contains("S") || mLine.contains("R")) {
+                        //reader.readLine();
+                        continue;
+                    }
+                    // Jump IRNSS (NAVIC) or QZSS messages
+                    if (mLine.contains("I") || mLine.contains("J")) {
+//                        reader.readLine();
+                        continue;
+                    }
+
+                    String PRN = mLine.substring(1, 4);
+                    
+                    //dataAtual = data; // TO DO
+                    double X = Double.valueOf(mLine.substring(5, 18).trim());
+                    double Y = Double.valueOf(mLine.substring(19, 32).trim());
+                    double Z = Double.valueOf(mLine.substring(33, 46).trim());
+                    double dts = Double.valueOf(mLine.substring(47, 60).trim());
+
+                    CoordenadaGNSS novaCoord = new CoordenadaGNSS(PRN, X, Y, Z, dts);
+
+                    if (minutes == 0 || minutes == 15 || minutes == 30 || minutes == 45) {
+                        listaCoordPrecisasLidas.add(novaCoord);
+
+//                int epch = i + 1;
+                        System.out.println("Epoca nº " + cont + ": " + data.toString() + "\n" + novaCoord.toString());
+                        
+                    }
+
+                }
+                if (minutes == 0 || minutes == 15 || minutes == 30 || minutes == 45) {
+                    cont++;
+                    System.out.println("\n=======================================");
+                }
+            } catch (Exception err) {
+                err.printStackTrace();
+            }
+//            listaEfemeridesAtual.add(efemeride);
+        }
+
+        
+        
+        reader.close();
+        return sb.toString();
     }
     
     public static ArrayList<GNSSNavMsg> listaEfemeridesOriginal = new ArrayList<>();
@@ -50,7 +140,8 @@ public class RinexParser {
     public static ArrayList<GNSSMeasurement> listaMedicoesAtual = new ArrayList<>();
     public static ArrayList<CoordenadaGNSS> listaCoordAtual = new ArrayList<>();
     
-    public static ArrayList<CoordenadaGNSS> listaCoordInterpoladas = new ArrayList<>();
+    public static ArrayList<CoordenadaGNSS> listaCoordInterpoladas  = new ArrayList<>();
+    public static ArrayList<CoordenadaGNSS> listaCoordPrecisasLidas = new ArrayList<>();
     
     public static ArrayList<Integer> listaPRNsAtual = new ArrayList<>();
     public static ArrayList<EpocaGNSS> listaEpocas = new ArrayList<>();

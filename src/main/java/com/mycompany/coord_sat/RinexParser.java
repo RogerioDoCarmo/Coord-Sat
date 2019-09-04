@@ -23,7 +23,7 @@ public class RinexParser {
     static final int INCREMENT_SECONDS = 1;
     
     static int flag_min_seconds = INCREMENT_SECONDS; // 0 == minutes; 1 == seconds
-    static int flag_gnss = PROCESS_GPS; // 0 == GPS, 1 = Galileo, 2 - Beidou
+    static int flag_gnss = PROCESS_BEIDOU; // 0 == GPS, 1 = Galileo, 2 - Beidou
     static final int LAGRANGE_DEGREE = 6;
     
     static StringBuilder builder;
@@ -80,14 +80,14 @@ public class RinexParser {
         }               
                 
         //fit_interval = 6; // Numero de epocas
-        //calcCoordSat_Interval(flag_gnss, -incremento, fit_interval);
-        //print_file("C:\\Users\\Rogerio\\Desktop\\calc_interpol\\coord_calc_G02_sec_min.txt");
+        calcCoordSat_Interval(flag_gnss, -incremento, fit_interval);
+        //print_file("C:\\Users\\Rogerio\\Desktop\\calc_interpol\\coord_calc_C12_sec_min.txt");
         System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-        //calcCoordSat_Interval(flag_gnss,  incremento, fit_interval);
-        //print_file("C:\\Users\\Rogerio\\Desktop\\calc_interpol\\coord_calc_G02_sec_max.txt");
+        calcCoordSat_Interval(flag_gnss,  incremento, fit_interval);
+        //print_file("C:\\Users\\Rogerio\\Desktop\\calc_interpol\\coord_calc_C12_sec_max.txt");
         
-        interpolateCoordSat_Interval(flag_gnss,incremento, fit_interval);
-        print_file("C:\\Users\\Rogerio\\Desktop\\calc_interpol\\coord_interpol_G02.txt");
+        //interpolateCoordSat_Interval(flag_gnss,incremento, fit_interval);
+        //print_file("C:\\Users\\Rogerio\\Desktop\\calc_interpol\\coord_interpol_C12.txt");
         
         //print_file("C:\\Users\\Rogerio\\Desktop\\coord_pos.txt");
         //builder = new StringBuilder(contentSPE);

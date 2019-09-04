@@ -71,8 +71,7 @@ public class RinexParser {
         String contentSPE = read_sp3_cut(fileNameSP3);
                
         //calcCoordSat();
-        
-                
+                        
         int fit_interval = 24; // 0 == 24
         int incremento = 5; // 0 == 5
         if (flag_min_seconds == INCREMENT_SECONDS) { // seconds

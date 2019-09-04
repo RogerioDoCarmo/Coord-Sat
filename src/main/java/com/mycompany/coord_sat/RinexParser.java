@@ -58,7 +58,7 @@ public class RinexParser {
     public static void main (String[] args) throws IOException {
 
         System.out.println("==============================================\n");
-        System.out.println("    Calculo de Coordenadas de Satelites\n");
+        System.out.println("    Calculo de Coordenadas de Satelites!\n");
         System.out.println("==============================================\n\n");
         
         String fileName    = "C:\\Users\\Rogerio\\Desktop\\coord\\processamento\\recorte.19p";

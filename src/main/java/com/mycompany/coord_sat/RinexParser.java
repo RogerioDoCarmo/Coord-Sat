@@ -1,8 +1,12 @@
 package com.mycompany.coord_sat;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 
 /**
@@ -18,12 +22,37 @@ public class RinexParser {
     static final int INCREMENT_MINUTES = 0;
     static final int INCREMENT_SECONDS = 1;
     
-    static int flag_min_seconds = INCREMENT_SECONDS; // 0 == minutes; 1 == seconds
-    static int flag_gnss = PROCESS_BEIDOU; // 0 == GPS, 1 = Galileo, 2 - Beidou
+    static int flag_min_seconds = INCREMENT_MINUTES; // 0 == minutes; 1 == seconds
+    static int flag_gnss = PROCESS_GPS; // 0 == GPS, 1 = Galileo, 2 - Beidou
     static final int LAGRANGE_DEGREE = 6;
+    
+    static StringBuilder builder;
     
     public static double convert_HMS_TO_HOURS(double hour, double minutes, double seconds) {
         return ( hour + minutes*(1d/60d) + seconds*(1d/3600d));
+    }
+    
+    public static void print_file(String fileName) {
+        BufferedWriter bufferedWriter = null;
+        try {
+            String strContent = builder.toString();
+            File myFile = new File(fileName);
+            // check if file exist, otherwise create the file before writing
+            if (!myFile.exists()) {
+                myFile.createNewFile();
+            }
+            Writer writer = new FileWriter(myFile);
+            bufferedWriter = new BufferedWriter(writer);
+            bufferedWriter.write(strContent);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally{
+            try{
+                if(bufferedWriter != null) bufferedWriter.close();
+            } catch(Exception ex){
+                 
+            }
+        }
     }
     
     public static void main (String[] args) throws IOException {
@@ -39,10 +68,11 @@ public class RinexParser {
         System.out.println("Arquivo: " + fileName + "\n\n");
         
         String fileNameSP3 = "C:\\Users\\Rogerio\\Desktop\\coord\\processamento\\COM20646.EPH";
-        //read_sp3_cut(fileNameSP3);
+        String contentSPE = read_sp3_cut(fileNameSP3);
                
         //calcCoordSat();
         
+                
         int fit_interval = 24; // 0 == 24
         int incremento = 5; // 0 == 5
         if (flag_min_seconds == INCREMENT_SECONDS) { // seconds
@@ -51,10 +81,15 @@ public class RinexParser {
         }               
                 
         //fit_interval = 6; // Numero de epocas
-        calcCoordSat_Interval(flag_gnss,  incremento, fit_interval);
+        calcCoordSat_Interval(flag_gnss, -incremento, fit_interval);
         System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-        //calcCoordSat_Interval(flag_gnss, -incremento, fit_interval);
-        interpolateCoordSat_Interval(flag_gnss,incremento, fit_interval); 
+        calcCoordSat_Interval(flag_gnss,  incremento, fit_interval);
+        //interpolateCoordSat_Interval(flag_gnss,incremento, fit_interval); 
+        
+        print_file("C:\\Users\\Rogerio\\Desktop\\coord_pos.txt");
+        builder = new StringBuilder(contentSPE);
+        //builder.append(contentSPE);
+        print_file("C:\\Users\\Rogerio\\Desktop\\coord_precisa.txt");
     }
     
     public static String read_sp3_cut(String fileName) throws IOException {
@@ -77,6 +112,9 @@ public class RinexParser {
 //        while ( (mLine = reader.readLine()) != null ){
         while ( !mLine.equals("EOF") ){
 //            mLine = reader.readLine();
+
+//            sb.append(mLine);
+//            sb.append("\n");
 
             if (mLine.isEmpty()) break; // Last line of the file
                         
@@ -123,13 +161,23 @@ public class RinexParser {
 
 //                int epch = i + 1;
                         System.out.println("Epoca nº: " + cont + " " + data.toString() + "\n" + novaCoord.toString());
-                        
+                       
+                        if (PRN.equals("G02") || PRN.equals("E02") || PRN.equals("C12")) {
+                            sb.append(PRN).append(" ");
+                            sb.append(data.toString()).append(" ").append(X).
+                                                      append(" ").append(Y).
+                                                      append(" ").append(Z).
+                                                      append(" ").append(dts);
+                            sb.append("\n");
+                        }
+
                     }
 
                 }
                 if (minutes == 0 || minutes == 15 || minutes == 30 || minutes == 45) {
                     cont++;
                     System.out.println("\n=======================================");
+                    
                 }
             } catch (Exception err) {
                 err.printStackTrace();
@@ -504,6 +552,8 @@ public class RinexParser {
         dataObservacao.setMin(0);
         dataObservacao.setSec(0);
         
+        builder = new StringBuilder();
+        
         for (int i = 0; i < nn; i++ ){                        
             double a0 = listaEfemeridesAtual.get(pos_inicial).getAf0();                       
             double a1 = listaEfemeridesAtual.get(pos_inicial).getAf1();                    
@@ -627,6 +677,13 @@ public class RinexParser {
             
             int epch = i + 1;
             System.out.println("Epoca nº: " + epch + " " + dataObservacao.toString() + "\n" + novaCoord.toString());
+            
+            
+            builder.append(dataObservacao.toString()).append(" ").append(X).
+                                                      append(" ").append(Y).
+                                                      append(" ").append(Z).
+                                                      append(" ").append(dts);
+            builder.append("\n");
             
             //Next iteration
             if (flag_min_seconds == 0) {

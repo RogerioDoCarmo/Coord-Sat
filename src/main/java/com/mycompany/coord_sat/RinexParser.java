@@ -68,7 +68,7 @@ public class RinexParser {
         System.out.println("Arquivo: " + fileName + "\n\n");
         
         String fileNameSP3 = "C:\\Users\\Rogerio\\Desktop\\coord\\processamento\\COM20646.EPH";
-        String contentSPE = read_sp3_cut(fileNameSP3);
+        String contentSPE = read_sp3_cut(fileNameSP3,"C12");
                
         //calcCoordSat();
                         
@@ -88,10 +88,10 @@ public class RinexParser {
         print_file("C:\\Users\\Rogerio\\Desktop\\coord_pos.txt");
         builder = new StringBuilder(contentSPE);
         //builder.append(contentSPE);
-        print_file("C:\\Users\\Rogerio\\Desktop\\coord_precisa.txt");
+        print_file("C:\\Users\\Rogerio\\Desktop\\coord_precisas_C12.txt");
     }
     
-    public static String read_sp3_cut(String fileName) throws IOException {
+    public static String read_sp3_cut(String fileName, String aPRN) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
 
         StringBuilder sb = new StringBuilder();
@@ -155,13 +155,13 @@ public class RinexParser {
 
                     CoordenadaGNSS novaCoord = new CoordenadaGNSS(PRN, X, Y, Z, dts);
 
-                    if (minutes == 0 || minutes == 15 || minutes == 30 || minutes == 45) {
+//                    if (minutes == 0 || minutes == 15 || minutes == 30 || minutes == 45) {
                         listaCoordPrecisasLidas.add(novaCoord);
 
 //                int epch = i + 1;
-                        System.out.println("Epoca nº: " + cont + " " + data.toString() + "\n" + novaCoord.toString());
+                        //System.out.println("Epoca nº: " + cont + " " + data.toString() + "\n" + novaCoord.toString());
                        
-                        if (PRN.equals("G02") || PRN.equals("E02") || PRN.equals("C12")) {
+                        if (PRN.equals(aPRN)) {
                             sb.append(PRN).append(" ");
                             sb.append(data.toString()).append(" ").append(X).
                                                       append(" ").append(Y).
@@ -170,14 +170,14 @@ public class RinexParser {
                             sb.append("\n");
                         }
 
-                    }
+//                    }
 
                 }
-                if (minutes == 0 || minutes == 15 || minutes == 30 || minutes == 45) {
-                    cont++;
-                    System.out.println("\n=======================================");
-                    
-                }
+//                if (minutes == 0 || minutes == 15 || minutes == 30 || minutes == 45) {
+//                    cont++;
+//                    System.out.println("\n=======================================");
+//                    
+//                }
             } catch (Exception err) {
                 err.printStackTrace();
             }

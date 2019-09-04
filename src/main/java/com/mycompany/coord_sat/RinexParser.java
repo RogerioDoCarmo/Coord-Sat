@@ -23,7 +23,7 @@ public class RinexParser {
     static final int INCREMENT_SECONDS = 1;
     
     static int flag_min_seconds = INCREMENT_MINUTES; // 0 == minutes; 1 == seconds
-    static int flag_gnss = PROCESS_GPS; // 0 == GPS, 1 = Galileo, 2 - Beidou
+    static int flag_gnss = PROCESS_BEIDOU; // 0 == GPS, 1 = Galileo, 2 - Beidou
     static final int LAGRANGE_DEGREE = 6;
     
     static StringBuilder builder;
@@ -68,7 +68,7 @@ public class RinexParser {
         System.out.println("Arquivo: " + fileName + "\n\n");
         
         String fileNameSP3 = "C:\\Users\\Rogerio\\Desktop\\coord\\processamento\\COM20646.EPH";
-        String contentSPE = read_sp3_cut(fileNameSP3,"C12");
+        //String contentSPE = read_sp3_cut(fileNameSP3,"C12");
                
         //calcCoordSat();
                         
@@ -81,14 +81,16 @@ public class RinexParser {
                 
         //fit_interval = 6; // Numero de epocas
         calcCoordSat_Interval(flag_gnss, -incremento, fit_interval);
+        print_file("C:\\Users\\Rogerio\\Desktop\\coord_calc_C12_min.txt");
         System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         calcCoordSat_Interval(flag_gnss,  incremento, fit_interval);
+        print_file("C:\\Users\\Rogerio\\Desktop\\coord_calc_C12_max.txt");
         //interpolateCoordSat_Interval(flag_gnss,incremento, fit_interval); 
         
-        print_file("C:\\Users\\Rogerio\\Desktop\\coord_pos.txt");
-        builder = new StringBuilder(contentSPE);
+        //print_file("C:\\Users\\Rogerio\\Desktop\\coord_pos.txt");
+        //builder = new StringBuilder(contentSPE);
         //builder.append(contentSPE);
-        print_file("C:\\Users\\Rogerio\\Desktop\\coord_precisas_C12.txt");
+        //print_file("C:\\Users\\Rogerio\\Desktop\\coord_precisas_C12.txt");
     }
     
     public static String read_sp3_cut(String fileName, String aPRN) throws IOException {
@@ -678,7 +680,7 @@ public class RinexParser {
             System.out.println("Epoca nº: " + epch + " " + dataObservacao.toString() + "\n" + novaCoord.toString());
             
             
-            builder.append(dataObservacao.toString()).append(" ").append(X).
+            builder.append(PRN).append(" ").append(dataObservacao.toString()).append(" ").append(X).
                                                       append(" ").append(Y).
                                                       append(" ").append(Z).
                                                       append(" ").append(dts);

@@ -3,11 +3,13 @@ package com.mycompany.coord_sat;
 
 public class GNSSNavMsg implements Comparable<GNSSNavMsg>{
     /**
-     * GNSSNavMsg structure based on ReadRinexNav.m file from Google
-     * clock variable names af0, af1, af2 follow IS GPS 200
+     * GNSSNavMsg structure based on Rinex 3.03 version
     */
     private GNSSDate data;
-    private Integer PRN;         // SV PRN number
+    private String PRN_FULL;     // SV PRN_FULL Letternumber
+    private String constellation;// Constelation: G = GPS; R = Glonass; E = Galileo; C = BeiDou
+    private int PRN;
+    
     private double Toc;          // Time of clock (seconds)
     private double af0;          // SV clock bias (seconds)
     private double af1;          // SV clock drift (sec/sec)
@@ -28,7 +30,7 @@ public class GNSSNavMsg implements Comparable<GNSSNavMsg>{
     private double Crc;	         // Cosine harmonic correction to the orbit radius (meters)
     private double w;	         // Argument of perigee (radians)
     private double Omega_v;      // Rate of right ascension (radians/sec)
-    private double IDOT;	     // Rate of inclination angle (radians/sec)
+    private double IDOT;	 // Rate of inclination angle (radians/sec)
     private double codeL2;       // codes on L2 channel
     private double GPS_Week;     // GPS week (to go with Toe), (NOT Mod 1024)
     private double L2PdataFlag;  // L2 P data flag
@@ -38,15 +40,29 @@ public class GNSSNavMsg implements Comparable<GNSSNavMsg>{
     private double IODC;         // Issue of Data, Clock
     private double ttx;	         // Transmission time of message (seconds)
     private double Fit_interval; //fit interval (hours), zero if not known
+        
+    public void setPRN(String PRN) {
+        this.setPRN_FULL(PRN);
+        this.constellation = PRN.substring(0, 1);
+        this.PRN = ((int) Integer.valueOf(PRN.substring(1,3)));
+    }
 
-    public Integer getPRN() {
+    public String getPRN_FULL() {
+        return PRN_FULL;
+    }
+
+    public void setPRN_FULL(String PRN_FULL) {
+        this.PRN_FULL = PRN_FULL;
+    }
+
+    public String getConstellation() {
+        return constellation;
+    }
+
+    public int getPRN() {
         return PRN;
     }
-
-    public void setPRN(Integer PRN) {
-        this.PRN = PRN;
-    }
-
+    
     public double getToc() {
         return Toc;
     }
@@ -295,17 +311,23 @@ public class GNSSNavMsg implements Comparable<GNSSNavMsg>{
         return data;
     }
 
+    
 
     /**
-     * Comparable method to sort all the Navigation Messages by the satellite id (PRN)
-     * TODO: Implement Comparator methods
+     * Comparable method to sort all the Navigation Messages by the satellite id (PRN_FULL)
+ TODO: Implement Comparator methods
      * @param another Another instance of the GNSSNavMsg class.
-     * @return A negative number if this object PRN is lesser than another.
-     * <p>0 if the PRNs are equal.
-     * <p>A positive number if this object PRN is greater than another.
+     * @return A negative number if this object PRN_FULL is lesser than another.
+ <p>0 if the PRNs are equal.
+     * <p>A positive number if this object PRN_FULL is greater than another.
      */
     @Override
     public int compareTo(GNSSNavMsg another) {
-        return (this.getPRN() - another.getPRN());
+        if (this.getConstellation().equals(another.getConstellation())) {
+            return (this.getPRN() - another.getPRN());
+        }else{
+            return Integer.MIN_VALUE;
+        }
     }
+
 }

@@ -15,6 +15,10 @@ public class GNSSConstants {
     public static final int DAY_SAB = 6;
     public static final int CONSTELLATION_GPS = 1;
     public static final int CONSTELLATION_GLONASS = 3;
+    public static final String GPS_LETTER     = "G";
+    public static final String GALILEO_LETTER = "E";
+    public static final String GLONASS_LETTER = "R";
+    public static final String BEIDOU_LETTER  = "C";
     public static final Long WEEKSEC = 604800L; /*Number of seconds in a week*/
     public static final double LIGHTSPEED = 2.99792458e8;
     public static final long GPS_EPOCH_AS_UNIX_EPOCH_MS = TimeUnit.DAYS.toMillis(3657);
@@ -30,9 +34,12 @@ public class GNSSConstants {
     public static final int C_TO_N0_THRESHOLD_DB_HZ = 18;
     public static final int RECEIVED_SVTIME_UNCERTAINTY_NANOS_THRESHOLD = 500;
     public static final int PSEUDORANGE_UNCERTAINTY_METERS_THRESHOLD = 10;
-    public static final double GM = 3.9860044185E14;
-    public static final double We = 7.2921151467E-5;
-
+    /* Constantes de gravidade e rotacao*/
+    public static final double GM_GPS = 3.9860044185E14;
+    public static final double WE_GPS = 7.2921151467E-5;
+    
+    public static final double GM_BEIDOU = 398600.4418E9;
+    public static final double WE_BEIDOU = 7.2921150E-5;
     public static final int MAX_ITERACOES = 8;
 
     /*Valores copiados do Geo++ RINEX Logger*/

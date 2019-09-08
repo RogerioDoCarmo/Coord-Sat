@@ -239,17 +239,17 @@ public static int CRC24(long size, char[] buf){
                  int numbytes=0;
 
 
-                        client = (SocketConnection)Connector.open(url);
-                        client.setSocketOption(SocketConnection.DELAY, 0);//desativado o algoritmo para peq. pacotes
-                        client.setSocketOption(SocketConnection.LINGER, 5); //segundos de espera antes de fechar a conexão
-                        client.setSocketOption(SocketConnection.KEEPALIVE, 0); //desativado
-
-
-                        input = client.openInputStream();
-                        dataInput = new DataInputStream(input);
-
-                        output = client.openOutputStream();
-                        dataOut = new DataOutputStream(output);
+//                        client = (SocketConnection)Connector.open(url);
+//                        client.setSocketOption(SocketConnection.DELAY, 0);//desativado o algoritmo para peq. pacotes
+//                        client.setSocketOption(SocketConnection.LINGER, 5); //segundos de espera antes de fechar a conexão
+//                        client.setSocketOption(SocketConnection.KEEPALIVE, 0); //desativado
+//
+//
+//                        input = client.openInputStream();
+//                        dataInput = new DataInputStream(input);
+//
+//                        output = client.openOutputStream();
+//                        dataOut = new DataOutputStream(output);
 
                         String request = new String("GET /"+mp+" HTTP/1.1\r\nHost: "+server+"\r\nNtrip-Version: Ntrip/2.0\r\nUser-Agent: NTRIP NtripRTCM3ToRINEX/1.37\r\nConnection: close\r\nAuthorization: Basic ");
 
@@ -299,10 +299,10 @@ public static int CRC24(long size, char[] buf){
     		if (input != null) {
     			input.close();
     		}
-    		if (client != null) {
-                     System.out.println("fechando a conexão...");
-    			client.close();//fechando conexão
-    		}
+//    		if (client != null) {
+//                     System.out.println("fechando a conexão...");
+//    			client.close();//fechando conexão
+//    		}
     	}
     }
 

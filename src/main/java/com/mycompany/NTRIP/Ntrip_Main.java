@@ -18,19 +18,23 @@ import java.util.logging.Logger;
  * @author Rogerio
  */
 public class Ntrip_Main extends Thread{
-    public static final String     SERVER          = "products.igs-ip.net";
-//    public static final String     SERVER          = "170.84.40.52";
+//    public static final String     SERVER          = "products.igs-ip.net";
+    public static final String     SERVER          = "170.84.40.52";
+//    public static final String     SERVER          = "200.145.185.200";
     
     public static final Integer      PORT          = 2101;
-    //public static final String MOUNTPOINT          = "RTCM3EPH";
-    //public static final String MOUNTPOINT          = "SIRGAS200002";
-    public static final String MOUNTPOINT          = "IGS01";
+//    public static final String MOUNTPOINT          = "RTCM3EPH";
+//    public static final String MOUNTPOINT          = "SIRGAS200002";
+    public static final String   MOUNTPOINT        = "POLI1";
+    //public static final String MOUNTPOINT          = "IGS01";
 //    public static final String MOUNTPOINT          = "PPTE1";
     public static final String       USER          = "";
     public static final String   PASSWORD          = "";
-    public static final String   USR_PASS_ENCODED_64 = "cm9nZXJpdTo3MTg5MA=="; // MINHA
-//    public static final String   USR_PASS_ENCODED_64 = "dmVydG9uOnZlcnRvbjE1==";
-    //dmVydG9uOnZlcnRvbjE1
+//    public static final String   USR_PASS_ENCODED_64 = "cm9nZXJpdTo3MTg5MA=="; // MINHA
+    public static final String   USR_PASS_ENCODED_64 = "dmVydG9uOnZlcnRvbjE1"; // wev
+//    public static final String   USR_PASS_ENCODED_64 = "dGVzdGUwMTplbmdjYXI="; // unesp
+    
+    
     private static boolean done = false;
     
     //static RTCM3ParserData handle;
@@ -44,8 +48,8 @@ public class Ntrip_Main extends Thread{
     static char[] dado;
     static char[] msg = new char[2048]; //buffer que contém somente os dados da mensagem
     //static char[] dado;
-//    static int controle = 0; static int tam=0; static int posi = 0;
-//    static int tam1=0;
+    static int controle = 0; static int tam=0; static int posi = 0;
+    static int tam1=0;
     
      //---------------------------------------------------------------------------------------------
     // variáveis definidas no define
@@ -227,8 +231,7 @@ private static final char[] getSTRING(int b,char[] s) {
     }
     static int contt = 0;
     public static void getMessage(char c ) {
-      
-    /* msg[0] - preambulo
+        /* msg[0] - preambulo
        msg[1] - bits reservados
        msg[2] - tamanho da mensagem
        msg[3] - mensagem
@@ -240,22 +243,9 @@ private static final char[] getSTRING(int b,char[] s) {
        msg[n+2] - CRC
      */
 
-     int controle = 0;  int tam=0;  int posi = 0;
-     int tam1=0;
-       
 	int tam2;
         char preambulo = 0xD3;
         System.out.print(c);
-        contt++;
-//        msg
-                
-        boolean flag = false;
-        
-//        if (contt == test.length + 1){
-//            flag = true;
-//        }
-        
-        //System.out.println(" -> Valor de cont: " + contt);
 	if(c == preambulo && controle == 0) { //se for o preambulo
                 msg[posi]=c; //recebendo preambulo
                 controle=1; //passou pelo pré ambulo
@@ -271,14 +261,14 @@ private static final char[] getSTRING(int b,char[] s) {
                 posi=0; //indice volta
 	}
 	else if(controle==2) { //tamanho da mensagem
-		test[posi]=c;
-                System.out.println("msg[2]:"+(int)msg[posi]);
+		msg[posi]=c;
+              //  System.out.println("msg[2]:"+(int)msg[posi]);
 		tam1= (msg[1]&0x03)<<8 ; //tamanho da mensagem
-                System.out.println("tam1:"+tam1);
-                tam = tam1 | test[2];
-                System.out.println("\ntam:"+tam);
+               // System.out.println("tam1:"+tam1);
+                tam = tam1 | msg[2];
+                System.out.println("tam:"+tam);
                 tam2= (msg[1]&0x03)<<8 | msg[2] ;
-                System.out.println("\ntam:"+tam2);
+                System.out.println("tam:"+tam2);
 		posi=posi+1;
 		controle=3; //passou pelo tamanho
 	}
@@ -287,23 +277,47 @@ private static final char[] getSTRING(int b,char[] s) {
 		posi=posi+1;
 	}
 	else if(controle==3&&posi>=tam+6) { //terminou de ler toda a mensagem
-
-                if(((msg[3+tam]<<16)|(msg[3+tam+1]<<8)|(msg[3+tam+2])) == Decodifica.CRC24(tam+3, msg)) {
+            System.out.println("\nTerminou a mensagem!");
+            
+                if(((msg[3+tam]<<16)|(msg[3+tam+1]<<8)|(msg[3+tam+2])) == CRC24(tam+3, msg)) {
                     tam2=tam;
                     decodifica(tam2);
                 }
-
+//decodifica(tam);
 		controle=1; tam=0; posi=0;
-		test[posi]=c;
+		msg[posi]=c;
 		posi=posi+1;
 	}
-//        if (flag){
-//            
-//        }
 }
-    
+   
+    public static int CRC24(long size, char[] buf) {
+        int crc = 0;
+        int i, j = 0;
+
+        while (size != 0) {
+            crc ^= ((buf[j++]) << (16));
+            for (i = 0; i < 8; i++) {
+                crc <<= 1;
+                if ((crc & 0x1000000) != 0) {
+                    crc ^= 0x01864cfb;
+                }
+            }
+            size--;
+        }
+        return crc;
+    }
+  
     public static void decodifica(int cmsg) {
-      System.out.printf("Entrou no decodifica!");
+      System.out.printf("\n\nEntrou no decodifica!");
+      
+      System.out.printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      System.out.print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      System.out.print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      System.out.print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      System.out.print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      System.out.print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      
+      
     int  syncf = 0,old = 0,ret=0;
     size=cmsg;
     long nmsg = 0,refs = 0, data=0;

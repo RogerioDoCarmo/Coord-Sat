@@ -6,6 +6,7 @@
 package com.mycompany.NTRIP;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.Socket;
 import java.io.InputStreamReader;
@@ -16,22 +17,35 @@ import java.util.logging.Logger;
  *
  * @author Rogerio
  */
-public class Ntrip_Main {
+public class Ntrip_Main extends Thread{
     public static final String     SERVER          = "products.igs-ip.net";
+//    public static final String     SERVER          = "170.84.40.52";
+    
     public static final Integer      PORT          = 2101;
-    public static final String MOUNTPOINT          = "RTCM3EPH01";
+    //public static final String MOUNTPOINT          = "RTCM3EPH";
+    //public static final String MOUNTPOINT          = "SIRGAS200002";
+    public static final String MOUNTPOINT          = "IGS01";
+//    public static final String MOUNTPOINT          = "PPTE1";
     public static final String       USER          = "";
     public static final String   PASSWORD          = "";
-    public static final String USR_PASS_ENCODED_64 = "cm9nZXJpdTo3MTg5MA==";
+    public static final String   USR_PASS_ENCODED_64 = "cm9nZXJpdTo3MTg5MA=="; // MINHA
+//    public static final String   USR_PASS_ENCODED_64 = "dmVydG9uOnZlcnRvbjE1==";
+    //dmVydG9uOnZlcnRvbjE1
+    private static boolean done = false;
     
     //static RTCM3ParserData handle;
     
+    static Socket s;
     static String sourceTable;  
     
-    static char[] msg; //buffer que contém somente os dados da mensagem
+    
+        
+        
     static char[] dado;
-    static int controle; static int tam=0; static int posi;
-    static int tam1=0;
+    static char[] msg = new char[2048]; //buffer que contém somente os dados da mensagem
+    //static char[] dado;
+//    static int controle = 0; static int tam=0; static int posi = 0;
+//    static int tam1=0;
     
      //---------------------------------------------------------------------------------------------
     // variáveis definidas no define
@@ -129,7 +143,7 @@ private static final char[] getSTRING(int b,char[] s) {
     static RTCM3ParserData handle;
     
     public static void getSourceTable() throws IOException {
-        Socket s = new Socket(SERVER, PORT);
+         s = new Socket(SERVER, PORT);
 
         String wtr = "";
 
@@ -159,12 +173,15 @@ private static final char[] getSTRING(int b,char[] s) {
         sourceTable = builder.toString();        
         System.out.println(sourceTable);
 
+        if (s != null) {
+            s.close();
+        }
         bufRead.close();
     }
     
     public static void getFromMountPoint() throws IOException {
-        Socket s = new Socket(SERVER, PORT);        
-        
+         s = new Socket(SERVER, PORT);        
+//        msg= new char[5000];
         String wtr = "";
 
         wtr += "GET /"  + MOUNTPOINT + " HTTP/1.1\r\n"
@@ -184,25 +201,31 @@ private static final char[] getSTRING(int b,char[] s) {
         
         //Creates a BufferedReader that contains the SERVER response
         BufferedReader bufRead = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        int outStr;
+        int dadosEntrada;
 
         StringBuilder builder = new StringBuilder();
       
-        while((outStr = bufRead.read()) != -1){
-            builder.append((char)outStr);
+        builder.append("\n");
+        while((dadosEntrada = bufRead.read()) != -1 && !done){
+            builder.append((char)dadosEntrada);
 //            builder.append("\n");
 //            System.out.print((char)outStr);
-            getMessage((char)outStr);
+            getMessage((char)dadosEntrada);
         }
 
         Logger.getLogger(Ntrip_Main.class.getName()).log(Level.INFO, "Request MOUNTPOINT received\n");
         
-        sourceTable = builder.toString();        
-        System.out.println(sourceTable);
+//        sourceTable = builder.toString();        
+//        System.out.println(sourceTable);
 
+        if (s != null){
+            s.close();
+        }
+       
+           
         bufRead.close();
     }
-    
+    static int contt = 0;
     public static void getMessage(char c ) {
       
     /* msg[0] - preambulo
@@ -217,9 +240,22 @@ private static final char[] getSTRING(int b,char[] s) {
        msg[n+2] - CRC
      */
 
+     int controle = 0;  int tam=0;  int posi = 0;
+     int tam1=0;
+       
 	int tam2;
         char preambulo = 0xD3;
-        System.out.println(c);
+        System.out.print(c);
+        contt++;
+//        msg
+                
+        boolean flag = false;
+        
+//        if (contt == test.length + 1){
+//            flag = true;
+//        }
+        
+        //System.out.println(" -> Valor de cont: " + contt);
 	if(c == preambulo && controle == 0) { //se for o preambulo
                 msg[posi]=c; //recebendo preambulo
                 controle=1; //passou pelo pré ambulo
@@ -235,14 +271,14 @@ private static final char[] getSTRING(int b,char[] s) {
                 posi=0; //indice volta
 	}
 	else if(controle==2) { //tamanho da mensagem
-		msg[posi]=c;
-              //  System.out.println("msg[2]:"+(int)msg[posi]);
+		test[posi]=c;
+                System.out.println("msg[2]:"+(int)msg[posi]);
 		tam1= (msg[1]&0x03)<<8 ; //tamanho da mensagem
-               // System.out.println("tam1:"+tam1);
-                tam = tam1 | msg[2];
-                System.out.println("tam:"+tam);
+                System.out.println("tam1:"+tam1);
+                tam = tam1 | test[2];
+                System.out.println("\ntam:"+tam);
                 tam2= (msg[1]&0x03)<<8 | msg[2] ;
-                System.out.println("tam:"+tam2);
+                System.out.println("\ntam:"+tam2);
 		posi=posi+1;
 		controle=3; //passou pelo tamanho
 	}
@@ -258,13 +294,16 @@ private static final char[] getSTRING(int b,char[] s) {
                 }
 
 		controle=1; tam=0; posi=0;
-		msg[posi]=c;
+		test[posi]=c;
 		posi=posi+1;
 	}
+//        if (flag){
+//            
+//        }
 }
     
     public static void decodifica(int cmsg) {
-      
+      System.out.printf("Entrou no decodifica!");
     int  syncf = 0,old = 0,ret=0;
     size=cmsg;
     long nmsg = 0,refs = 0, data=0;
@@ -400,7 +439,7 @@ private static final char[] getSTRING(int b,char[] s) {
         }
    }
     
-    public void HandleByte(int r) throws IOException {
+    public static void HandleByte(int r) throws IOException {
       System.out.println("ret1 : "+r);
        if(r!=0){
        byte data[];
@@ -410,7 +449,8 @@ private static final char[] getSTRING(int b,char[] s) {
                  StringBuffer str = new StringBuffer("");
                 System.out.println("ret2 : "+r);
                 // abre arquivo GPS para rinex 3.0
-                if (handle.rinex3 != 0 && (file = handle.gpsfile) == null) {
+                //if (handle.rinex3 != 0 && (file = handle.gpsfile) == null)
+                 {
 
                         String n;
                          if(handle.gpsephemeris.length()>0 && handle.gpsephemeris != null) {n = handle.gpsephemeris;}
@@ -418,18 +458,18 @@ private static final char[] getSTRING(int b,char[] s) {
 
                               if (n != null && n.length()>0) {
 
-                              handle.gpsfile = (FileConnection)Connector.open(n, Connector.READ_WRITE);
-                              if (!handle.gpsfile.exists()) {
-                                   handle.gpsfile.create();
-                              }
+//                              handle.gpsfile = (FileConnection)Connector.open(n, Connector.READ_WRITE);
+//                              if (!handle.gpsfile.exists()) {
+//                                   handle.gpsfile.create();
+//                              }
                               System.out.println("HAHA");
-                              dops = handle.gpsfile.openDataOutputStream();
+//                              dops = handle.gpsfile.openDataOutputStream();
                               System.out.println("ABRIU O DOPS");
                               String s = "     3.00            N: GNSS NAV DATA    M: Mixed            RINEX VERSION / TYPE\n";
                               str.append(s);
 
                               BufferAux buffer = new BufferAux(new String(new char[100]));
-                              HandleRunBy(buffer, buffer.bufferSize, null, handle.rinex3);
+//                              HandleRunBy(buffer, buffer.bufferSize, null, handle.rinex3);
 
                               s = ""+buffer.string+"\n                                                  " +
                                     "          END OF HEADER\n";
@@ -438,7 +478,7 @@ private static final char[] getSTRING(int b,char[] s) {
                               handle.gpsephemeris = "";
                               handle.glonassephemeris = "";
 
-                              file = handle.gpsfile;
+//                              file = handle.gpsfile;
 
                         }
                 } //if rinex3
@@ -449,26 +489,26 @@ private static final char[] getSTRING(int b,char[] s) {
 
                             if (handle.gpsephemeris != null && handle.gpsephemeris.length()>0) {
 
-                                  handle.gpsfile = (FileConnection)Connector.open("file:///root1/GPS.txt", Connector.READ_WRITE);
+//                                  handle.gpsfile = (FileConnection)Connector.open("file:///root1/GPS.txt", Connector.READ_WRITE);
 
-                                 if (!handle.gpsfile.exists()) {
-                                    handle.gpsfile.create();
-                                  }
-                                  dops = handle.gpsfile.openDataOutputStream();
+//                                 if (!handle.gpsfile.exists()) {
+//                                    handle.gpsfile.create();
+//                                  }
+//                                  dops = handle.gpsfile.openDataOutputStream();
 
                                   BufferAux buffer = new BufferAux(new String(new char[100]));
 
                                   String s = "     2.10           N: GPS NAV DATA                         RINEX VERSION / TYPE\n";
                                   str.append(s);
 
-                                  HandleRunBy(buffer, buffer.bufferSize, null, handle.rinex3);
+//                                  HandleRunBy(buffer, buffer.bufferSize, null, handle.rinex3);
                                   s = ""+buffer.string+"\n                                                  " +
                                     "          END OF HEADER\n";
                                   str.append(s);
 
                                   handle.gpsephemeris = "";
                              }
-                         file = handle.gpsfile;
+//                         file = handle.gpsfile;
                           System.out.println("RECEBEU O ARQUIVO HANDLE 1020");
                        }
                 }// rinex 2.11
@@ -476,7 +516,8 @@ private static final char[] getSTRING(int b,char[] s) {
                 System.out.println("É UMA MSG 1019!!!");
             
                // tratamento do file
-                if (file != null) {
+//               if (file != null) 
+                {
                      System.out.println("file não é null!!!");
                      
                          System.out.println("ENTROU NA MSG 1019!!!");
@@ -484,6 +525,7 @@ private static final char[] getSTRING(int b,char[] s) {
                         int i;       /* temporary variable */
 
                         converttime cti = new converttime();
+                        StringBuilder str = new StringBuilder();
                         String temp;
 //                        temp = "\nMensagem 1019";
 //                        str.append(temp);
@@ -572,18 +614,19 @@ private static final char[] getSTRING(int b,char[] s) {
                         str.append(temp);
                         temp = str.toString();
                         data = temp.getBytes();
-                        dops.write(data);/*INSERIR temp NO ARQUIVO*/
+//                        dops.write(data);/*INSERIR temp NO ARQUIVO*/
 
             /* TOW */
                     }//if r == 1019
 //                }//if file !=null
 //            } //fim arq 1020 e 1019
-            else {
+//            else 
+            {
             //System.out.println("iria entrar no arquivo");
             if(handle.observdata != null && handle.observdata.length()>0){
            // System.out.println("entrou no else!");
                 int i, j, o;
-                process = true;
+//                process = true;
               
                 StringBuffer strbuff = new StringBuffer("");
                 String line;
@@ -594,7 +637,7 @@ private static final char[] getSTRING(int b,char[] s) {
                     System.out.println("incrementou init: " +handle.init);
                     if (handle.init == Constantes.NUMSTARTSKIP) {
                         System.out.println("entrou pra chamar handleheader: " +handle.init);
-                       strbuff = HandleHeader();
+                       //strbuff = HandleHeader();
                         System.out.println("chamou handle!");
                     }
                     else {
@@ -602,10 +645,11 @@ private static final char[] getSTRING(int b,char[] s) {
                             handle.startflags |= handle.Data.dataflags[i];
                         }
                         System.out.println("vai setar com false!");
-                        process = false; // continue;
+                        //process = false; // continue;
                     }//else
                  }//fim if nunstartskip
-                 if(process) {
+                //if(process)
+                  {
 
                     if (r == 2 && !(handle.validwarning != 0)) {
                         line = "No valid RINEX! All values are modulo 299792.458!"
@@ -864,18 +908,68 @@ private static final char[] getSTRING(int b,char[] s) {
     public static void main (String[] args) {
         try {
 //            getSourceTable();
-            getFromMountPoint();
+            //getFromMountPoint();
+            System.out.println("Principal!!!!!!\n\n");
             //teste();
         } catch (Exception ex) {
             Logger.getLogger(Ntrip_Main.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    public static void teste (){
-        char[] msg = "64    €*ØúÐù]tSíàÙÁ?°c®Ö	WÅ}?ò  €ÍÜ;ÌƒÓ".toCharArray();
-        for (int i = 0; i < msg.length; i++) {
-            decodifica(msg[i]);
+    public static void teste () throws IOException{
+        read_rtcm_test("C:\\Users\\Rogerio\\Desktop\\ntrip_ascii.txt");
+        //char[] msg = "64    €*ØúÐù]tSíàÙÁ?°c®Ö	WÅ}?ò  €ÍÜ;ÌƒÓ".toCharArray();
+        for (int i = 0; i < test.length; i++) {
+            getMessage(test[i]);
         }
     }
     
+    static char[] test = new char[72105];
+    
+     public static String read_rtcm_test(String fileName) throws IOException {
+         System.out.println("Testando do arquivo\n\n!");
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+
+        StringBuilder sb = new StringBuilder();             
+        String sub = "";
+
+        reader.read(test);
+        
+//        String mLine = reader.readLine();
+//        while ( (mLine = reader.readLine()) != null ){
+//        while ( !mLine.isEmpty() ){
+//            mLine = reader.readLine();
+
+//            sb.append(mLine);
+//            sb.append("\n");
+
+//            if (mLine.isEmpty()) break; // Last line of the file
+                        
+          
+            try {
+               
+                 
+//                }
+            } catch (Exception err) {
+                err.printStackTrace();
+            }
+//            listaEfemeridesAtual.add(efemeride);
+//        }
+
+        
+        
+        reader.close();
+        return sb.toString();
+    }
+
+    @Override
+     public void run() {
+         try {
+             getFromMountPoint();
+//             if(done) return;
+             System.out.println("hahaha fechou a thread ");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+     }
 }

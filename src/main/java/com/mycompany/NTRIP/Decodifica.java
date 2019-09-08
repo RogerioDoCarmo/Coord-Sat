@@ -4,24 +4,24 @@ package com.mycompany.NTRIP;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import javax.microedition.io.Connector;
-import javax.microedition.io.file.FileConnection;
+//import javax.microedition.io.Connector;
+//import javax.microedition.io.file.FileConnection;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
-import javax.microedition.io.OutputConnection;
-import javax.microedition.io.SocketConnection;
-import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.AlertType;
-import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Display;
-import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Form;
-import javax.microedition.lcdui.TextBox;
-import javax.microedition.lcdui.TextField;
+//import javax.microedition.io.OutputConnection;
+//import javax.microedition.io.SocketConnection;
+//import javax.microedition.lcdui.Alert;
+//import javax.microedition.lcdui.AlertType;
+//import javax.microedition.lcdui.Command;
+//import javax.microedition.lcdui.CommandListener;
+//import javax.microedition.lcdui.Display;
+//import javax.microedition.lcdui.Displayable;
+//import javax.microedition.lcdui.Form;
+//import javax.microedition.lcdui.TextBox;
+//import javax.microedition.lcdui.TextField;
 
 /*
  * To change this template, choose Tools | Templates
@@ -36,8 +36,9 @@ import javax.microedition.lcdui.TextField;
 /* o uso de thread permite que o dispositivo não fique travado enquanto espera por respostas de rede.
  * Escolhi fazer então, todo o codigo de conexão dentro de uma thread!
  */
-public class Decodifica extends Thread implements CommandListener{
-
+//extends Thread
+public class Decodifica  {
+//public class Decodifica extends Thread implements CommandListener{
  
     private String url = new String();
     private DataOutputStream OS = null;
@@ -45,7 +46,7 @@ public class Decodifica extends Thread implements CommandListener{
     private InputStream IS = null;
     private char[] buf;
     private DataInputStream is = null;
-    private SocketConnection client;
+    //private SocketConnection client;
     private OutputStream output = null;
     private DataOutputStream dataOut = null;
     private InputStream input = null;
@@ -58,13 +59,13 @@ public class Decodifica extends Thread implements CommandListener{
     private String user;
     private String port;
 
-    private Form tela;
-    private Inicial inicio;
-    private Command comando_concluir;
-    private TextField textfield;
-    private Display display;
-    private TextBox textbox;
-    private Alert alerta_erro;
+//    private Form tela;
+//    private Inicial inicio;
+//    private Command comando_concluir;
+//    private TextField textfield;
+//    private Display display;
+//    private TextBox textbox;
+//    private Alert alerta_erro;
     private boolean done = false;
 
     char[] msg; //buffer que contém somente os dados da mensagem
@@ -73,10 +74,10 @@ public class Decodifica extends Thread implements CommandListener{
     int tam1=0;
     static char revisionstr[] = "$Revision: 1.37 $".toCharArray();
     private boolean process = true;
-    OutputConnection file = null;
+//    OutputConnection file = null;
     DataOutputStream dops = null;
     DataOutputStream dots = null;
-    FileConnection filertcm = null;
+//    FileConnection filertcm = null;
     RTCM3ParserData handle;
      //---------------------------------------------------------------------------------------------
     // variáveis definidas no define
@@ -192,7 +193,8 @@ public static int CRC24(long size, char[] buf){
 }
 
 
-    public Decodifica(Display d,Inicial in,String url, DadosUser dados,RTCM3ParserData parser) throws IOException{
+    // Display d,Inicial in,
+    public Decodifica(Inicial in,String url, DadosUser dados,RTCM3ParserData parser) throws IOException{
 
                 System.out.println(dados.getUsuario() );
         System.out.println(dados.getSenha() );
@@ -208,30 +210,30 @@ public static int CRC24(long size, char[] buf){
 
 
         this.url = url;
-        this.inicio = in;
-        this.display = d;
+        //this.inicio = in;
+        //this.display = d;
         this.controle=0;
         this.posi=0;
         msg= new char[2048];
 
         this.handle = parser;
-        filertcm = (FileConnection) Connector.open("file:///root1/rtcmtext3.txt", Connector.READ_WRITE);
-        if (!filertcm.exists()) {
-                filertcm.create();
-                              }
-        dots = filertcm.openDataOutputStream();
-      
+//        filertcm = (FileConnection) Connector.open("file:///root1/rtcmtext3.txt", Connector.READ_WRITE);
+//        if (!filertcm.exists()) {
+//                filertcm.create();
+//                              }
+//        dots = filertcm.openDataOutputStream();
+//      
+//
+//         textbox = new TextBox("Gerando Arquivo","Arquivo rinex sendo gerado...Para finalizar pressione Concluir ",1000,TextField.ANY);
+//
+//         comando_concluir= new Command("Concluir", Command.SCREEN, 1);
+//         textbox.addCommand(comando_concluir);
+//         textbox.setCommandListener(this);
+//         display.setCurrent(textbox);
 
-         textbox = new TextBox("Gerando Arquivo","Arquivo rinex sendo gerado...Para finalizar pressione Concluir ",1000,TextField.ANY);
-
-         comando_concluir= new Command("Concluir", Command.SCREEN, 1);
-         textbox.addCommand(comando_concluir);
-         textbox.setCommandListener(this);
-         display.setCurrent(textbox);
-
-        this.start();
+//        this.start();
     }
-
+//
      private String processarEnvio() throws IOException {
     	try {
                  int numbytes=0;
@@ -519,572 +521,572 @@ public void getMessage(char c ) {
         break;
         
     }
-        try {
-            HandleByte( ret);
-        } catch (IOException ex) {
-             System.out.println("Não foi possível a chamada");
-            ex.printStackTrace();
-        }
+//        try {
+//            HandleByte( ret);
+//        } catch (IOException ex) {
+//             System.out.println("Não foi possível a chamada");
+//            ex.printStackTrace();
+//        }
    }
 
-  public void HandleByte(int r) throws IOException {
-      System.out.println("ret1 : "+r);
-       if(r!=0){
-       byte data[];
-            
-            if (r == 1020 || r == 1019) {
-                 StringBuffer str = new StringBuffer("");
-                System.out.println("ret2 : "+r);
-                // abre arquivo GPS para rinex 3.0
-                if (handle.rinex3 != 0 && (file = handle.gpsfile) == null) {
-
-                        String n;
-                         if(handle.gpsephemeris.length()>0 && handle.gpsephemeris != null) {n = handle.gpsephemeris;}
-                         else {n = handle.glonassephemeris;}
-
-                              if (n != null && n.length()>0) {
-
-                              handle.gpsfile = (FileConnection)Connector.open(n, Connector.READ_WRITE);
-                              if (!handle.gpsfile.exists()) {
-                                   handle.gpsfile.create();
-                              }
-                              System.out.println("HAHA");
-                              dops = handle.gpsfile.openDataOutputStream();
-                              System.out.println("ABRIU O DOPS");
-                              String s = "     3.00            N: GNSS NAV DATA    M: Mixed            RINEX VERSION / TYPE\n";
-                              str.append(s);
-
-                              BufferAux buffer = new BufferAux(new String(new char[100]));
-                              HandleRunBy(buffer, buffer.bufferSize, null, handle.rinex3);
-
-                              s = ""+buffer.string+"\n                                                  " +
-                                    "          END OF HEADER\n";
-                              str.append(s);
-
-                              handle.gpsephemeris = "";
-                              handle.glonassephemeris = "";
-
-                              file = handle.gpsfile;
-
-                        }
-                } //if rinex3
-                else {
-
-                        if (r == 1020) {
-                            System.out.println("ESTÁ NA MENSAGEM 1020 : ");
-
-                            if (handle.glonassephemeris != null && handle.glonassephemeris.length()>0) {
-
-                                handle.glonassfile = (FileConnection)Connector.open("file:///root1/GLONASS.txt", Connector.READ_WRITE);
-
-
-                                if (!handle.glonassfile.exists()) {
-                                   handle.glonassfile.create();
-                                }
-
-                                dops = handle.glonassfile.openDataOutputStream();
-
-                                String s = "     2.10            G: GLONASS NAV DATA                     RINEX VERSION / TYPE\n";
-                                str.append(s);
-
-                                BufferAux buffer = new BufferAux(new String(new char[100]));
-                                HandleRunBy(buffer, buffer.bufferSize, null, handle.rinex3);
-                                s = ""+buffer.string+"\n                                                  " +
-                                    "          END OF HEADER\n";
-                                str.append(s);
-
-                                handle.glonassephemeris = "";
-
-                           }
-                           file = handle.glonassfile;
-                            System.out.println("RECEBEU O ARQUIVO HANDLE 1020");
-                        }
-                        // rinex 2.1
-                        else if (r == 1019) {
-                             System.out.println("ESTÁ NA MENSAGEM 1019: ");
-
-                            if (handle.gpsephemeris != null && handle.gpsephemeris.length()>0) {
-
-                                  handle.gpsfile = (FileConnection)Connector.open("file:///root1/GPS.txt", Connector.READ_WRITE);
-
-                                 if (!handle.gpsfile.exists()) {
-                                    handle.gpsfile.create();
-                                  }
-                                  dops = handle.gpsfile.openDataOutputStream();
-
-                                  BufferAux buffer = new BufferAux(new String(new char[100]));
-
-                                  String s = "     2.10           N: GPS NAV DATA                         RINEX VERSION / TYPE\n";
-                                  str.append(s);
-
-                                  HandleRunBy(buffer, buffer.bufferSize, null, handle.rinex3);
-                                  s = ""+buffer.string+"\n                                                  " +
-                                    "          END OF HEADER\n";
-                                  str.append(s);
-
-                                  handle.gpsephemeris = "";
-                             }
-                         file = handle.gpsfile;
-                          System.out.println("RECEBEU O ARQUIVO HANDLE 1020");
-                       }
-                }// rinex 2.11
-
-               // tratamento do file
-                if (file != null) {
-                     System.out.println("file não é null!!!");
-                    if (r == 1020) {
-                          System.out.println("ENTROU NA MSG 1020!!!");
-
-                        int w = handle.ephemerisGLONASS.GPSWeek, tow = handle.ephemerisGLONASS.GPSTOW, i;
-
-                        converttime cti = new converttime();
-                        String temp;
-//                        temp = "\nMensagem 1020";
+//  public void HandleByte(int r) throws IOException {
+//      System.out.println("ret1 : "+r);
+//       if(r!=0){
+//       byte data[];
+//            
+//            if (r == 1020 || r == 1019) {
+//                 StringBuffer str = new StringBuffer("");
+//                System.out.println("ret2 : "+r);
+//                // abre arquivo GPS para rinex 3.0
+//                if (handle.rinex3 != 0 && (file = handle.gpsfile) == null) {
+//
+//                        String n;
+//                         if(handle.gpsephemeris.length()>0 && handle.gpsephemeris != null) {n = handle.gpsephemeris;}
+//                         else {n = handle.glonassephemeris;}
+//
+//                              if (n != null && n.length()>0) {
+//
+////                              handle.gpsfile = (FileConnection)Connector.open(n, Connector.READ_WRITE);
+////                              if (!handle.gpsfile.exists()) {
+////                                   handle.gpsfile.create();
+////                              }
+////                              System.out.println("HAHA");
+////                              dops = handle.gpsfile.openDataOutputStream();
+//                              System.out.println("ABRIU O DOPS");
+//                              String s = "     3.00            N: GNSS NAV DATA    M: Mixed            RINEX VERSION / TYPE\n";
+//                              str.append(s);
+//
+//                              BufferAux buffer = new BufferAux(new String(new char[100]));
+//                              HandleRunBy(buffer, buffer.bufferSize, null, handle.rinex3);
+//
+//                              s = ""+buffer.string+"\n                                                  " +
+//                                    "          END OF HEADER\n";
+//                              str.append(s);
+//
+//                              handle.gpsephemeris = "";
+//                              handle.glonassephemeris = "";
+//
+////                              file = handle.gpsfile;
+//
+//                        }
+//                } //if rinex3
+//                else {
+//
+//                        if (r == 1020) {
+//                            System.out.println("ESTÁ NA MENSAGEM 1020 : ");
+//
+//                            if (handle.glonassephemeris != null && handle.glonassephemeris.length()>0) {
+//
+//                                //handle.glonassfile = (FileConnection)Connector.open("file:///root1/GLONASS.txt", Connector.READ_WRITE);
+//
+//
+////                                if (!handle.glonassfile.exists()) {
+////                                   handle.glonassfile.create();
+////                                }
+////
+////                                dops = handle.glonassfile.openDataOutputStream();
+//
+//                                String s = "     2.10            G: GLONASS NAV DATA                     RINEX VERSION / TYPE\n";
+//                                str.append(s);
+//
+//                                BufferAux buffer = new BufferAux(new String(new char[100]));
+//                                HandleRunBy(buffer, buffer.bufferSize, null, handle.rinex3);
+//                                s = ""+buffer.string+"\n                                                  " +
+//                                    "          END OF HEADER\n";
+//                                str.append(s);
+//
+//                                handle.glonassephemeris = "";
+//
+//                           }
+////                           file = handle.glonassfile;
+//                            System.out.println("RECEBEU O ARQUIVO HANDLE 1020");
+//                        }
+//                        // rinex 2.1
+//                        else if (r == 1019) {
+//                             System.out.println("ESTÁ NA MENSAGEM 1019: ");
+//
+//                            if (handle.gpsephemeris != null && handle.gpsephemeris.length()>0) {
+//
+////                                  handle.gpsfile = (FileConnection)Connector.open("file:///root1/GPS.txt", Connector.READ_WRITE);
+////
+////                                 if (!handle.gpsfile.exists()) {
+////                                    handle.gpsfile.create();
+////                                  }
+////                                  dops = handle.gpsfile.openDataOutputStream();
+//
+//                                  BufferAux buffer = new BufferAux(new String(new char[100]));
+//
+//                                  String s = "     2.10           N: GPS NAV DATA                         RINEX VERSION / TYPE\n";
+//                                  str.append(s);
+//
+//                                  HandleRunBy(buffer, buffer.bufferSize, null, handle.rinex3);
+//                                  s = ""+buffer.string+"\n                                                  " +
+//                                    "          END OF HEADER\n";
+//                                  str.append(s);
+//
+//                                  handle.gpsephemeris = "";
+//                             }
+//                         file = handle.gpsfile;
+//                          System.out.println("RECEBEU O ARQUIVO HANDLE 1020");
+//                       }
+//                }// rinex 2.11
+//
+//               // tratamento do file
+//                if (file != null) {
+//                     System.out.println("file não é null!!!");
+//                    if (r == 1020) {
+//                          System.out.println("ENTROU NA MSG 1020!!!");
+//
+//                        int w = handle.ephemerisGLONASS.GPSWeek, tow = handle.ephemerisGLONASS.GPSTOW, i;
+//
+//                        converttime cti = new converttime();
+//                        String temp;
+////                        temp = "\nMensagem 1020";
+////                        str.append(temp);
+//                        Auxiliar aux = new Auxiliar(handle.ephemerisGLONASS.GPSWeek, handle.ephemerisGLONASS.GPSTOW);
+//                        Tempo.updatetime(aux, handle.ephemerisGLONASS.tb * 1000, 1);
+//                        handle.ephemerisGLONASS.GPSWeek = (int)aux.week;
+//                        handle.ephemerisGLONASS.GPSTOW = (int)aux.secOfWeek;
+//
+//                        Tempo.convertTime(cti, (int)aux.week,(int)aux.secOfWeek);
+//
+//                        i = handle.ephemerisGLONASS.tk - 3 * 60 * 60;
+//                        if (i < 0) {
+//                            i += 86400;
+//                        }
+//                        double ik = (double) i;
+//                        if (handle.rinex3 != 0) {
+//                            temp = "R"+Defines.formata("02",String.valueOf(handle.ephemerisGLONASS.almanac_number), "int")+" "+Defines.formata("04",String.valueOf(cti.year), "int")+" "+
+//                                    Defines.formata("02",String.valueOf(cti.month), "int")+" "+Defines.formata("02",String.valueOf(cti.day), "int")+" "+
+//                                    Defines.formata("02",String.valueOf(cti.hour), "int")+" "+Defines.formata("02",String.valueOf(cti.minute), "int")+" "+
+//                                    Defines.formata("02",String.valueOf(cti.second), "int")+Defines.formata("19,12",String.valueOf(-handle.ephemerisGLONASS.tau), "double")+
+//                                    Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.gamma), "double")+Defines.formata("19,12",String.valueOf(ik), "double")+"\n";
+//                            temp = Defines.replace(temp, 'E','D');
+//                            str.append(temp);
+//                            /*INSERIR temp NO ARQUIVO*/
+//
+//                        } else {
+//                            int j= cti.year % 100;
+//                            double k = (double) cti.second;
+//                            double ki = -handle.ephemerisGLONASS.tau;
+//                            temp = Defines.formata("02",String.valueOf(handle.ephemerisGLONASS.almanac_number), "int")+" "+Defines.formata("02",String.valueOf(j), "int")+" "+
+//                                    Defines.formata("02",String.valueOf(cti.month), "int")+" "+Defines.formata("02",String.valueOf(cti.day),"int")+" "+Defines.formata("02",String.valueOf(cti.hour), "int")+" "+
+//                                    Defines.formata("02",String.valueOf(cti.minute), "int")+Defines.formata("5,1",String.valueOf(k), "float")+
+//                                    Defines.formata("19,12",String.valueOf(ki), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.gamma), "double")+
+//                                    Defines.formata("19,12",String.valueOf(ik), "double")+"\n";
+//                             temp = Defines.replace(temp, 'E','D');
+//                             str.append(temp);/*INSERIR temp NO ARQUIVO*/
+//
+//                        }
+//                         if((handle.ephemerisGLONASS.flags & Constantes.GLOEPHF_UNHEALTHY) != 0){
+//                                temp = "   "+Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.x_pos), "double")+Defines.formata("19,12",String.valueOf( handle.ephemerisGLONASS.x_velocity), "double")+
+//                                Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.x_acceleration), "double")+Defines.formata("19,12",String.valueOf(1.0), "double")+"\n";
+//                         }
+//                         else{
+//                                temp = "   "+Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.x_pos), "double")+Defines.formata("19,12",String.valueOf( handle.ephemerisGLONASS.x_velocity), "double")+
+//                                Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.x_acceleration), "double")+Defines.formata("19,12",String.valueOf(0.0), "double")+"\n";
+//                         }
+//                         temp = Defines.replace(temp, 'E','D');
+//                         str.append(temp);/*INSERIR temp NO ARQUIVO*/
+//
+//                         double k = (double) handle.ephemerisGLONASS.frequency_number;
+//                         temp = "   "+Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.y_pos), "double")+Defines.formata("19,12",String.valueOf( handle.ephemerisGLONASS.y_velocity), "double")+
+//                                Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.y_acceleration), "double")+Defines.formata("19,12",String.valueOf(k), "double")+"\n";
+//                          temp = Defines.replace(temp, 'E','D');
+//                          str.append(temp);/*INSERIR temp NO ARQUIVO*/
+//
+//                        k = (double) handle.ephemerisGLONASS.E;
+//                        temp = "   "+Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.z_pos), "double")+Defines.formata("19,12",String.valueOf( handle.ephemerisGLONASS.z_velocity), "double")+
+//                                Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.z_acceleration), "double")+Defines.formata("19,12",String.valueOf(k), "double")+"\n";
+//                         temp = Defines.replace(temp, 'E','D');
+//                         str.append(temp);
+//                         temp = str.toString();
+//                         data = temp.getBytes();
+//                         dops.write(data);/*INSERIR temp NO ARQUIVO*/
+//
+//                    } //if r == 1020
+//                    else  {
+//                         System.out.println("ENTROU NA MSG 1019!!!");
+//                        double d;                 /* temporary variable */
+//                        int i;       /* temporary variable */
+//
+//                        converttime cti = new converttime();
+//                        String temp;
+////                        temp = "\nMensagem 1019";
+////                        str.append(temp);
+//                        Tempo.convertTime(cti, handle.ephemerisGPS.GPSweek, handle.ephemerisGPS.TOC);
+//
+//                        if (handle.rinex3 != 0) {
+//                            temp = "G"+Defines.formata("02",String.valueOf(handle.ephemerisGPS.satellite), "int")+" "+Defines.formata("04",String.valueOf(cti.year), "int")+" "+
+//                                    Defines.formata("02",String.valueOf(cti.month), "int")+" "+Defines.formata("02",String.valueOf(cti.day), "int")+" "+
+//                                    Defines.formata("02",String.valueOf(cti.hour), "int")+" "+Defines.formata("02",String.valueOf(cti.minute), "int")+" "+
+//                                    Defines.formata("02",String.valueOf(cti.second), "int")+Defines.formata("19,12",String.valueOf( handle.ephemerisGPS.clock_bias), "double")+
+//                                    Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.clock_drift), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.clock_driftrate), "double")+"\n";
+//                             temp = Defines.replace(temp, 'E','D');System.out.println("\ntemp: "+temp);
+//                             str.append(temp);/*INSERIR temp NO ARQUIVO*/
+//                        } else {
+//                             int j= cti.year % 100;
+//                             double k = (double) cti.second;
+//                            temp = Defines.formata("02",String.valueOf(handle.ephemerisGPS.satellite), "int")+" "+Defines.formata("02",String.valueOf(j), "int")+" "+
+//                                    Defines.formata("02",String.valueOf(cti.month), "int")+" "+Defines.formata("02",String.valueOf(cti.day),"int")+" "+Defines.formata("02",String.valueOf(cti.hour), "int")+" "+
+//                                    Defines.formata("02",String.valueOf(cti.minute), "int")+Defines.formata("5,1",String.valueOf(k), "float")+
+//                                    Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.clock_bias), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.clock_drift), "double")+
+//                                    Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.clock_driftrate), "double")+"\n";
+//                            temp = Defines.replace(temp, 'E','D');System.out.println("\ntemp: "+temp);
+//                            str.append(temp);
+//                            /*INSERIR temp NO ARQUIVO*/
+//
+//                        }
+//                        double aux =  (double) handle.ephemerisGPS.IODE;
+//                        temp = "   "+Defines.formata("19,12",String.valueOf(aux), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.Crs), "double")+
+//                                Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.Delta_n), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.M0), "double")+"\n";
+//                         temp = Defines.replace(temp, 'E','D');System.out.println("\ntemp: "+temp);
+//                         str.append(temp);/*INSERIR temp NO ARQUIVO*/
+//
+//                        temp = "   "+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.Cuc), "double")+Defines.formata("19,12",String.valueOf( handle.ephemerisGPS.e), "double")+
+//                                Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.Cus), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.sqrt_A), "double")+"\n";
+//                         temp = Defines.replace(temp, 'E','D');System.out.println("\ntemp: "+temp);
+//                         str.append(temp);/*INSERIR temp NO ARQUIVO*/
+//
+//                         aux = (double) handle.ephemerisGPS.TOE;
+//                        temp ="   "+Defines.formata("19,12",String.valueOf(aux), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.Cic), "double")+
+//                                Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.OMEGA0), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.Cis), "double")+"\n";
+//                         temp = Defines.replace(temp, 'E','D');System.out.println("\ntemp: "+temp);
+//                         str.append(temp);/*INSERIR temp NO ARQUIVO*/
+//
+//                        temp = "   "+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.i0), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.Crc), "double")+
+//                                Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.omega), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.OMEGADOT), "double")+"\n";
+//                         temp = Defines.replace(temp, 'E','D');System.out.println("\ntemp: "+temp);
+//                         str.append(temp);/*INSERIR temp NO ARQUIVO*/
+//
+//                        d = 0;
+//                        i = handle.ephemerisGPS.flags;
+//                        if ((i & Constantes.GPSEPHF_L2CACODE) != 0) {
+//                            d += 2.0;
+//                        }
+//                        if ((i & Constantes.GPSEPHF_L2PCODE) != 0) {
+//                            d += 1.0;
+//                        }
+//                        double week = handle.ephemerisGPS.GPSweek;
+//                        if((i & Constantes.GPSEPHF_L2PCODEDATA) != 0 ){
+//                               temp = "   "+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.IDOT), "double")+Defines.formata("19,12",String.valueOf(week), "double")+
+//                                Defines.formata("19,12",String.valueOf(1.0), "double")+"\n";
+//                        }
+//                        else{
+//                               temp = "   "+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.IDOT), "double")+Defines.formata("19,12",String.valueOf(week), "double")+
+//                                 Defines.formata("19,12",String.valueOf(0.0), "double")+"\n";
+//                        }
+//                        temp = Defines.replace(temp, 'E','D');System.out.println("\ntemp: "+temp);
+//                        str.append(temp); /*INSERIR temp NO ARQUIVO*/
+//
+//                        if (handle.ephemerisGPS.URAindex <= 6) /* URA index */ {
+//                            d = Math.ceil(10.0 * Mathm.pow(2.0, 1.0 + ((double) handle.ephemerisGPS.URAindex) / 2.0)) / 10.0;
+//                        } else {
+//                            d = Math.ceil(10.0 * Mathm.pow(2.0, ((double) handle.ephemerisGPS.URAindex) / 2.0)) / 10.0;
+//                        }
+//                        /* 15 indicates not to use satellite. We can't handle this special
+//                        case, so we create a high "non"-accuracy value. */
+//                        double sh = (double) handle.ephemerisGPS.SVhealth;
+//                        double iodc = (double) handle.ephemerisGPS.IODC;
+//                        temp = "   "+Defines.formata("19,12",String.valueOf(sh), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.TGD), "double")+
+//                                Defines.formata("19,12",String.valueOf(iodc), "double")+"\n";
+//                        temp = Defines.replace(temp, 'E','D');System.out.println("\ntemp: "+temp);
+//                        str.append(temp); /*INSERIR temp NO ARQUIVO*/
+//
+//                        double tow = (double) handle.ephemerisGPS.TOW;
+//                        temp = "   "+Defines.formata("19,12",String.valueOf(tow), "double")+Defines.formata("19,12",String.valueOf(0.0), "double")+"\n";
+//                        temp = Defines.replace(temp, 'E','D'); System.out.println("\ntemp: "+temp);
 //                        str.append(temp);
-                        Auxiliar aux = new Auxiliar(handle.ephemerisGLONASS.GPSWeek, handle.ephemerisGLONASS.GPSTOW);
-                        Tempo.updatetime(aux, handle.ephemerisGLONASS.tb * 1000, 1);
-                        handle.ephemerisGLONASS.GPSWeek = (int)aux.week;
-                        handle.ephemerisGLONASS.GPSTOW = (int)aux.secOfWeek;
-
-                        Tempo.convertTime(cti, (int)aux.week,(int)aux.secOfWeek);
-
-                        i = handle.ephemerisGLONASS.tk - 3 * 60 * 60;
-                        if (i < 0) {
-                            i += 86400;
-                        }
-                        double ik = (double) i;
-                        if (handle.rinex3 != 0) {
-                            temp = "R"+Defines.formata("02",String.valueOf(handle.ephemerisGLONASS.almanac_number), "int")+" "+Defines.formata("04",String.valueOf(cti.year), "int")+" "+
-                                    Defines.formata("02",String.valueOf(cti.month), "int")+" "+Defines.formata("02",String.valueOf(cti.day), "int")+" "+
-                                    Defines.formata("02",String.valueOf(cti.hour), "int")+" "+Defines.formata("02",String.valueOf(cti.minute), "int")+" "+
-                                    Defines.formata("02",String.valueOf(cti.second), "int")+Defines.formata("19,12",String.valueOf(-handle.ephemerisGLONASS.tau), "double")+
-                                    Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.gamma), "double")+Defines.formata("19,12",String.valueOf(ik), "double")+"\n";
-                            temp = Defines.replace(temp, 'E','D');
-                            str.append(temp);
-                            /*INSERIR temp NO ARQUIVO*/
-
-                        } else {
-                            int j= cti.year % 100;
-                            double k = (double) cti.second;
-                            double ki = -handle.ephemerisGLONASS.tau;
-                            temp = Defines.formata("02",String.valueOf(handle.ephemerisGLONASS.almanac_number), "int")+" "+Defines.formata("02",String.valueOf(j), "int")+" "+
-                                    Defines.formata("02",String.valueOf(cti.month), "int")+" "+Defines.formata("02",String.valueOf(cti.day),"int")+" "+Defines.formata("02",String.valueOf(cti.hour), "int")+" "+
-                                    Defines.formata("02",String.valueOf(cti.minute), "int")+Defines.formata("5,1",String.valueOf(k), "float")+
-                                    Defines.formata("19,12",String.valueOf(ki), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.gamma), "double")+
-                                    Defines.formata("19,12",String.valueOf(ik), "double")+"\n";
-                             temp = Defines.replace(temp, 'E','D');
-                             str.append(temp);/*INSERIR temp NO ARQUIVO*/
-
-                        }
-                         if((handle.ephemerisGLONASS.flags & Constantes.GLOEPHF_UNHEALTHY) != 0){
-                                temp = "   "+Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.x_pos), "double")+Defines.formata("19,12",String.valueOf( handle.ephemerisGLONASS.x_velocity), "double")+
-                                Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.x_acceleration), "double")+Defines.formata("19,12",String.valueOf(1.0), "double")+"\n";
-                         }
-                         else{
-                                temp = "   "+Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.x_pos), "double")+Defines.formata("19,12",String.valueOf( handle.ephemerisGLONASS.x_velocity), "double")+
-                                Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.x_acceleration), "double")+Defines.formata("19,12",String.valueOf(0.0), "double")+"\n";
-                         }
-                         temp = Defines.replace(temp, 'E','D');
-                         str.append(temp);/*INSERIR temp NO ARQUIVO*/
-
-                         double k = (double) handle.ephemerisGLONASS.frequency_number;
-                         temp = "   "+Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.y_pos), "double")+Defines.formata("19,12",String.valueOf( handle.ephemerisGLONASS.y_velocity), "double")+
-                                Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.y_acceleration), "double")+Defines.formata("19,12",String.valueOf(k), "double")+"\n";
-                          temp = Defines.replace(temp, 'E','D');
-                          str.append(temp);/*INSERIR temp NO ARQUIVO*/
-
-                        k = (double) handle.ephemerisGLONASS.E;
-                        temp = "   "+Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.z_pos), "double")+Defines.formata("19,12",String.valueOf( handle.ephemerisGLONASS.z_velocity), "double")+
-                                Defines.formata("19,12",String.valueOf(handle.ephemerisGLONASS.z_acceleration), "double")+Defines.formata("19,12",String.valueOf(k), "double")+"\n";
-                         temp = Defines.replace(temp, 'E','D');
-                         str.append(temp);
-                         temp = str.toString();
-                         data = temp.getBytes();
-                         dops.write(data);/*INSERIR temp NO ARQUIVO*/
-
-                    } //if r == 1020
-                    else  {
-                         System.out.println("ENTROU NA MSG 1019!!!");
-                        double d;                 /* temporary variable */
-                        int i;       /* temporary variable */
-
-                        converttime cti = new converttime();
-                        String temp;
-//                        temp = "\nMensagem 1019";
-//                        str.append(temp);
-                        Tempo.convertTime(cti, handle.ephemerisGPS.GPSweek, handle.ephemerisGPS.TOC);
-
-                        if (handle.rinex3 != 0) {
-                            temp = "G"+Defines.formata("02",String.valueOf(handle.ephemerisGPS.satellite), "int")+" "+Defines.formata("04",String.valueOf(cti.year), "int")+" "+
-                                    Defines.formata("02",String.valueOf(cti.month), "int")+" "+Defines.formata("02",String.valueOf(cti.day), "int")+" "+
-                                    Defines.formata("02",String.valueOf(cti.hour), "int")+" "+Defines.formata("02",String.valueOf(cti.minute), "int")+" "+
-                                    Defines.formata("02",String.valueOf(cti.second), "int")+Defines.formata("19,12",String.valueOf( handle.ephemerisGPS.clock_bias), "double")+
-                                    Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.clock_drift), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.clock_driftrate), "double")+"\n";
-                             temp = Defines.replace(temp, 'E','D');System.out.println("\ntemp: "+temp);
-                             str.append(temp);/*INSERIR temp NO ARQUIVO*/
-                        } else {
-                             int j= cti.year % 100;
-                             double k = (double) cti.second;
-                            temp = Defines.formata("02",String.valueOf(handle.ephemerisGPS.satellite), "int")+" "+Defines.formata("02",String.valueOf(j), "int")+" "+
-                                    Defines.formata("02",String.valueOf(cti.month), "int")+" "+Defines.formata("02",String.valueOf(cti.day),"int")+" "+Defines.formata("02",String.valueOf(cti.hour), "int")+" "+
-                                    Defines.formata("02",String.valueOf(cti.minute), "int")+Defines.formata("5,1",String.valueOf(k), "float")+
-                                    Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.clock_bias), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.clock_drift), "double")+
-                                    Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.clock_driftrate), "double")+"\n";
-                            temp = Defines.replace(temp, 'E','D');System.out.println("\ntemp: "+temp);
-                            str.append(temp);
-                            /*INSERIR temp NO ARQUIVO*/
-
-                        }
-                        double aux =  (double) handle.ephemerisGPS.IODE;
-                        temp = "   "+Defines.formata("19,12",String.valueOf(aux), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.Crs), "double")+
-                                Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.Delta_n), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.M0), "double")+"\n";
-                         temp = Defines.replace(temp, 'E','D');System.out.println("\ntemp: "+temp);
-                         str.append(temp);/*INSERIR temp NO ARQUIVO*/
-
-                        temp = "   "+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.Cuc), "double")+Defines.formata("19,12",String.valueOf( handle.ephemerisGPS.e), "double")+
-                                Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.Cus), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.sqrt_A), "double")+"\n";
-                         temp = Defines.replace(temp, 'E','D');System.out.println("\ntemp: "+temp);
-                         str.append(temp);/*INSERIR temp NO ARQUIVO*/
-
-                         aux = (double) handle.ephemerisGPS.TOE;
-                        temp ="   "+Defines.formata("19,12",String.valueOf(aux), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.Cic), "double")+
-                                Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.OMEGA0), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.Cis), "double")+"\n";
-                         temp = Defines.replace(temp, 'E','D');System.out.println("\ntemp: "+temp);
-                         str.append(temp);/*INSERIR temp NO ARQUIVO*/
-
-                        temp = "   "+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.i0), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.Crc), "double")+
-                                Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.omega), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.OMEGADOT), "double")+"\n";
-                         temp = Defines.replace(temp, 'E','D');System.out.println("\ntemp: "+temp);
-                         str.append(temp);/*INSERIR temp NO ARQUIVO*/
-
-                        d = 0;
-                        i = handle.ephemerisGPS.flags;
-                        if ((i & Constantes.GPSEPHF_L2CACODE) != 0) {
-                            d += 2.0;
-                        }
-                        if ((i & Constantes.GPSEPHF_L2PCODE) != 0) {
-                            d += 1.0;
-                        }
-                        double week = handle.ephemerisGPS.GPSweek;
-                        if((i & Constantes.GPSEPHF_L2PCODEDATA) != 0 ){
-                               temp = "   "+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.IDOT), "double")+Defines.formata("19,12",String.valueOf(week), "double")+
-                                Defines.formata("19,12",String.valueOf(1.0), "double")+"\n";
-                        }
-                        else{
-                               temp = "   "+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.IDOT), "double")+Defines.formata("19,12",String.valueOf(week), "double")+
-                                 Defines.formata("19,12",String.valueOf(0.0), "double")+"\n";
-                        }
-                        temp = Defines.replace(temp, 'E','D');System.out.println("\ntemp: "+temp);
-                        str.append(temp); /*INSERIR temp NO ARQUIVO*/
-
-                        if (handle.ephemerisGPS.URAindex <= 6) /* URA index */ {
-                            d = Math.ceil(10.0 * Mathm.pow(2.0, 1.0 + ((double) handle.ephemerisGPS.URAindex) / 2.0)) / 10.0;
-                        } else {
-                            d = Math.ceil(10.0 * Mathm.pow(2.0, ((double) handle.ephemerisGPS.URAindex) / 2.0)) / 10.0;
-                        }
-                        /* 15 indicates not to use satellite. We can't handle this special
-                        case, so we create a high "non"-accuracy value. */
-                        double sh = (double) handle.ephemerisGPS.SVhealth;
-                        double iodc = (double) handle.ephemerisGPS.IODC;
-                        temp = "   "+Defines.formata("19,12",String.valueOf(sh), "double")+Defines.formata("19,12",String.valueOf(handle.ephemerisGPS.TGD), "double")+
-                                Defines.formata("19,12",String.valueOf(iodc), "double")+"\n";
-                        temp = Defines.replace(temp, 'E','D');System.out.println("\ntemp: "+temp);
-                        str.append(temp); /*INSERIR temp NO ARQUIVO*/
-
-                        double tow = (double) handle.ephemerisGPS.TOW;
-                        temp = "   "+Defines.formata("19,12",String.valueOf(tow), "double")+Defines.formata("19,12",String.valueOf(0.0), "double")+"\n";
-                        temp = Defines.replace(temp, 'E','D'); System.out.println("\ntemp: "+temp);
-                        str.append(temp);
-                        temp = str.toString();
-                        data = temp.getBytes();
-                        dops.write(data);/*INSERIR temp NO ARQUIVO*/
-
-            /* TOW */
-                    }//if r == 1019
-                }//if file !=null
-            } //fim arq 1020 e 1019
-            else {
-            //System.out.println("iria entrar no arquivo");
-            if(handle.observdata != null && handle.observdata.length()>0){
-           // System.out.println("entrou no else!");
-                int i, j, o;
-                process = true;
-              
-                StringBuffer strbuff = new StringBuffer("");
-                String line;
-                converttime cti = new converttime(); // struct converttimeinfo cti;
-
-                if (handle.init < Constantes.NUMSTARTSKIP) {/* skip first epochs to detect correct data types */
-                    ++handle.init;
-                    System.out.println("incrementou init: " +handle.init);
-                    if (handle.init == Constantes.NUMSTARTSKIP) {
-                        System.out.println("entrou pra chamar handleheader: " +handle.init);
-                       strbuff = HandleHeader();
-                        System.out.println("chamou handle!");
-                    }
-                    else {
-                        for (i = 0; i < handle.Data.numsats; ++i) {
-                            handle.startflags |= handle.Data.dataflags[i];
-                        }
-                        System.out.println("vai setar com false!");
-                        process = false; // continue;
-                    }//else
-                 }//fim if nunstartskip
-                 if(process) {
-
-                    if (r == 2 && !(handle.validwarning != 0)) {
-                        line = "No valid RINEX! All values are modulo 299792.458!"
-                                + "           COMMENT\n";
-                        strbuff.append(line); /*INSERIR LINE NO ARQUIVO*/
-                        handle.validwarning = 1;
-                    }
-                   System.out.println("handle.Data.week!"+handle.Data.week);
-                    System.out.println("handle.Data.timeofweek!"+handle.Data.timeofweek);
-                     System.out.println("floor!"+(int)Math.floor(handle.Data.timeofweek / 1000.0));
-                    Tempo.convertTime(cti, (int)handle.Data.week,
-                            (int) Math.floor(handle.Data.timeofweek / 1000.0));
-                    if (handle.rinex3 != 0) {
-                        double z = (handle.Data.timeofweek / 1000.0)/1.0 ;
-                        double f =  (z - (int) z)* 1.0;
-                        f = cti.second + f;
-                        line ="> "+Defines.formata("04",String.valueOf(cti.year), "int")+" "+Defines.formata("02",String.valueOf(cti.month), "int")+" "
-                                +Defines.formata("02",String.valueOf(cti.day), "int")+" "+Defines.formata("02",String.valueOf(cti.hour), "int")
-                                +" "+Defines.formata("02",String.valueOf(cti.minute), "int")+Defines.formata("11,7",String.valueOf(f), "float")
-                                +" "+"0 "+Defines.formata("03",String.valueOf(handle.Data.numsats), "int")+"\n";
-
-                        strbuff.append(line); /*INSERIR LINE NO ARQUIVO*/
-
-                       int sat;
-                        for (i = 0; i < handle.Data.numsats; ++i) {
-
-                            int glo = 0;
-                            if (handle.Data.satellites[i] <= Constantes.PRN_GPS_END) {
-                                sat = handle.Data.satellites[i];
-                                line ="G"+Defines.formata("02",String.valueOf(sat), "int");//RTCM3Text("G%02d", handle.Data.satellites[i]);
-
-                                strbuff.append(line);/*INSERIR LINE NO ARQUIVO*/
-
-                            }
-                            else if (handle.Data.satellites[i] >= Constantes.PRN_GLONASS_START
-                                    && handle.Data.satellites[i] <= Constantes.PRN_GLONASS_END) {
-                                sat = handle.Data.satellites[i] - (Constantes.PRN_GLONASS_START - 1);
-                                line ="R"+Defines.formata("02",String.valueOf(sat), "int");//RTCM3Text("R%02d", handle.Data.satellites[i] - (Constantes.PRN_GLONASS_START - 1));
-
-                                strbuff.append(line);/*INSERIR LINE NO ARQUIVO*/
-                                glo = 1;
-                            }
-                            else if (handle.Data.satellites[i] >= Constantes.PRN_WAAS_START
-                                    && handle.Data.satellites[i] <= Constantes.PRN_WAAS_END) {
-                                 sat = handle.Data.satellites[i] - Constantes.PRN_WAAS_START + 20;
-                                 line ="S"+Defines.formata("02",String.valueOf(sat), "int");// RTCM3Text("S%02d", handle.Data.satellites[i] - Constantes.PRN_WAAS_START + 20);
-
-                                 strbuff.append(line);/*INSERIR LINE NO ARQUIVO*/
-                            }
-                            else {
-                                 sat =handle.Data.satellites[i];
-                                 line = Defines.formata("03",String.valueOf(sat), "int"); //RTCM3Text("%3d", handle.Data.satellites[i]);
-                                 strbuff.append(line);
-                            }
-                            double dat;
-                            if (glo != 0) {
-                                for (j = 0; j < handle.numdatatypesGLO; ++j) {
-                                    int df = handle.dataflagGLO[j];
-                                    int pos = handle.dataposGLO[j];
-                                    if ((handle.Data.dataflags[i] & df) != 0
-                                            && !Double.isNaN(handle.Data.measdata[i][pos])
-                                            && !Double.isInfinite(handle.Data.measdata[i][pos])) {
-                                        char lli = ' ';
-                                        char snr = ' ';
-                                        if (df != 0 & (Constantes.GNSSDF_L1CDATA | Constantes.GNSSDF_L1PDATA) != 0) {
-                                            if ((handle.Data.dataflags[i] & Constantes.GNSSDF_LOCKLOSSL1) != 0) {
-                                                lli = '1';
-                                            }
-                                            snr = (char) ('0' + handle.Data.snrL1[i]);
-                                        }
-                                        if (df != 0 & (Constantes.GNSSDF_L2CDATA | Constantes.GNSSDF_L2PDATA) != 0) {
-                                            if ((handle.Data.dataflags[i] & Constantes.GNSSDF_LOCKLOSSL2) != 0) {
-                                                lli = '1';
-                                            }
-                                            snr = (char) ('0' + handle.Data.snrL2[i]);
-                                        }
-                                       dat = handle.Data.measdata[i][pos];
-                                       line = Defines.formata("14,3",String.valueOf(dat), "floatd")+lli+snr;//RTCM3Text("%14.3f%c%c",handle.Data.measdata[i][pos], lli, snr);
-                                       strbuff.append(line); /*INSERIR LINE NO ARQUIVO*/
-                                    }
-                                    else { /* no or illegal data */
-                                        line ="                ";//RTCM3Text("                ");
-                                        strbuff.append(line);/*INSERIR LINE NO ARQUIVO*/
-                                    }
-                                }
-                            } //if(glo)
-                            else {
-                                for (j = 0; j < handle.numdatatypesGPS; ++j) {
-                                    int df = handle.dataflagGPS[j];
-                                    int pos = handle.dataposGPS[j];
-                                    if ((handle.Data.dataflags[i] & df) != 0
-                                            && !Double.isNaN(handle.Data.measdata[i][pos])
-                                            && !Double.isInfinite(handle.Data.measdata[i][pos])) {
-                                        char lli = ' ';
-                                        char snr = ' ';
-                                        if ((df & (Constantes.GNSSDF_L1CDATA | Constantes.GNSSDF_L1PDATA)) != 0) {
-                                            if ((handle.Data.dataflags[i] & Constantes.GNSSDF_LOCKLOSSL1) != 0) {
-                                                lli = '1';
-                                            }
-                                            snr = (char) ('0' + handle.Data.snrL1[i]);
-                                        }
-                                        if ((df & (Constantes.GNSSDF_L2CDATA | Constantes.GNSSDF_L2PDATA)) != 0) {
-                                            if ((handle.Data.dataflags[i] & Constantes.GNSSDF_LOCKLOSSL2) != 0) {
-                                                lli = '1';
-                                            }
-                                            snr = (char) ('0' + handle.Data.snrL2[i]);
-                                        }
-                                        dat = handle.Data.measdata[i][pos];
-                                        line = Defines.formata("14,3",String.valueOf(dat), "floatd")+lli+snr;//RTCM3Text("%14.3f%c%c",handle.Data.measdata[i][pos], lli, snr);
-                                        strbuff.append(line);/*INSERIR LINE NO ARQUIVO*/
-                                    } else { /* no or illegal data */
-                                         line ="                ";//RTCM3Text("                ");
-                                         strbuff.append(line);  /*INSERIR LINE NO ARQUIVO*/
-                                    }
-                                }
-                            }
-                             line ="\n";//RTCM3Text("\n");
-                             strbuff.append(line);
-                             /*INSERIR LINE NO ARQUIVO*/
-
-                        }//for
-                      } //fim rinex 3
-                      else {
-                         double z = (handle.Data.timeofweek / 1000.0)/1.0 ;
-                        double f =  (z - (int) z)* 1.0;
-                        f = cti.second + f;
-                         line = " "+Defines.formata("02",String.valueOf((cti.year)%100), "int")+" "+Defines.formata("02",String.valueOf(cti.month), "int")+" "
-                                +Defines.formata("02",String.valueOf(cti.day), "int")+" "+Defines.formata("02",String.valueOf(cti.hour), "int")
-                                +" "+Defines.formata("02",String.valueOf(cti.minute), "int")+" "+
-                                Defines.formata("10,7",String.valueOf(f), "float")+" "+"0 "+Defines.formata("03",String.valueOf(handle.Data.numsats), "int");
-                         strbuff.append(line);
-                      
-                         int sat;
-                         for (i = 0; i < 12 && i < handle.Data.numsats; ++i) {
-                            sat = handle.Data.satellites[i];
-                            if (handle.Data.satellites[i] <= Constantes.PRN_GPS_END) {
-                                line="G"+Defines.formata("02",String.valueOf(sat), "int");//RTCM3Text("G%02d", handle.Data.satellites[i]);
-                                strbuff.append(line);
-                            } else if (handle.Data.satellites[i] >= Constantes.PRN_GLONASS_START
-                                    && handle.Data.satellites[i] <= Constantes.PRN_GLONASS_END) {
-                                sat = handle.Data.satellites[i] - (Constantes.PRN_GLONASS_START - 1);
-                                line="R"+Defines.formata("02",String.valueOf(sat), "int");//RTCM3Text("R%02d", handle.Data.satellites[i] - (Constantes.PRN_GLONASS_START - 1));
-                                strbuff.append(line);
-
-                            } else if (handle.Data.satellites[i] >= Constantes.PRN_WAAS_START
-                                    && handle.Data.satellites[i] <= Constantes.PRN_WAAS_END) {
-                                 sat = handle.Data.satellites[i] - Constantes.PRN_WAAS_START + 20;
-                                line="S"+Defines.formata("02",String.valueOf(sat), "int");//RTCM3Text("S%02d", handle.Data.satellites[i] - Constantes.PRN_WAAS_START + 20);
-                                strbuff.append(line);
-                            } else {
-                                 sat =handle.Data.satellites[i];
-                                  line=Defines.formata("03",String.valueOf(sat), "int");//RTCM3Text("%3d", handle.Data.satellites[i]);
-                                  strbuff.append(line);
-                            }
-                        }
-                           line="\n";//RTCM3Text("\n");
-                           strbuff.append(line);
-                        o = 12;
-                        j = handle.Data.numsats - 12;
-                        System.out.println("handle.Data.numsats : "+handle.Data.numsats);
-                        while (j > 0) {
-                             line="                                "; //RTCM3Text("                                ");
-
-                             strbuff.append(line);
-                             for (i = o; i < o + 12 && i < handle.Data.numsats; ++i) {
-                                if (handle.Data.satellites[i] <= Constantes.PRN_GPS_END) {
-                                    sat = handle.Data.satellites[i];
-                                  line="G"+Defines.formata("02",String.valueOf(sat), "int");//  RTCM3Text("G%02d", handle.Data.satellites[i]);
-
-                                  strbuff.append(line);
-                                } else if (handle.Data.satellites[i] >= Constantes.PRN_GLONASS_START && handle.Data.satellites[i] <= Constantes.PRN_GLONASS_END) {
-                                    sat = handle.Data.satellites[i] - (Constantes.PRN_GLONASS_START - 1);
-                                    line="R"+Defines.formata("02",String.valueOf(sat), "int");// RTCM3Text("R%02d", handle.Data.satellites[i] - (Constantes.PRN_GLONASS_START - 1));
-
-                                    strbuff.append(line); 
-                                } else if (handle.Data.satellites[i] >= Constantes.PRN_WAAS_START && handle.Data.satellites[i] <= Constantes.PRN_WAAS_END) {
-                                    sat = handle.Data.satellites[i] - Constantes.PRN_WAAS_START + 20;
-                                    line="S"+Defines.formata("02",String.valueOf(sat), "int");// RTCM3Text("S%02d", handle.Data.satellites[i] - Constantes.PRN_WAAS_START + 20);
-
-                                    strbuff.append(line); 
-                                } else {
-                                    sat = handle.Data.satellites[i];
-                                    line=Defines.formata("03",String.valueOf(sat), "int");// RTCM3Text("%3d", handle.Data.satellites[i]);
-
-                                    strbuff.append(line); 
-                                }
-                            }
-                             line="\n";//RTCM3Text("\n");
-                             strbuff.append(line); 
-                            j -= 12;
-                            o += 12;
-                        }//fim while
-                        for (i = 0; i < handle.Data.numsats; ++i) {
-                            for (j = 0; j < handle.numdatatypesGPS; ++j) {
-                                int v = 0;
-                                int df = handle.dataflag[j];
-                                int pos = handle.datapos[j];
-                                if ((handle.Data.dataflags[i] & df) != 0
-                                        && !Double.isNaN(handle.Data.measdata[i][pos])
-                                        && !Double.isInfinite(handle.Data.measdata[i][pos])) {
-                                    v = 1;
-                                }
-                                else {
-                                    df = handle.dataflagGPS[j];
-                                    pos = handle.dataposGPS[j];
-
-                                    if ((handle.Data.dataflags[i] & df) != 0
-                                            && !Double.isNaN(handle.Data.measdata[i][pos])
-                                            && !Double.isInfinite(handle.Data.measdata[i][pos])) {
-                                        v = 1;
-                                    }
-                                }
-
-                                if (!(v != 0)) { /* no or illegal data */
-                                    line="                ";// RTCM3Text("                ");
-                                    strbuff.append(line);
-                                }
-                                else {
-                                    char lli = ' ';
-                                    String snr = " ";
-                                    if ((df & (Constantes.GNSSDF_L1CDATA | Constantes.GNSSDF_L1PDATA)) != 0) {
-                                        if ((handle.Data.dataflags[i] & Constantes.GNSSDF_LOCKLOSSL1) != 0) {
-                                            lli = '1';
-                                        }
-                                        //snr = "0" + String.valueOf(handle.Data.snrL1[i]);
-                                        snr =  String.valueOf(handle.Data.snrL1[i]);
-                                    }
-                                    if ((df & (Constantes.GNSSDF_L2CDATA | Constantes.GNSSDF_L2PDATA)) != 0) {
-                                        if ((handle.Data.dataflags[i] & Constantes.GNSSDF_LOCKLOSSL2) != 0) {
-                                            lli = '1';
-                                        }
-                                        //snr = "0" + String.valueOf(handle.Data.snrL2[i]);
-                                        snr = String.valueOf(handle.Data.snrL2[i]);
-                                    }
-                                       double dat = handle.Data.measdata[i][pos];
-                                       line = Defines.formata("14,3",String.valueOf(dat),"floatd")+lli+snr;//RTCM3Text("%14.3f%c%c",handle.Data.measdata[i][pos], lli, snr);
-                                       strbuff.append(line);
-
-                                }
-                                if (j % 5 == 4 || j == handle.numdatatypesGPS - 1) {
-                                      line="\n";//RTCM3Text("\n");
-                                      strbuff.append(line);
-                                }
-                            }//fim for2
-                        }//fim for
-                    }//rinex 2.11
-                line = strbuff.toString();
-                data = line.getBytes();
-                dots.write(data);
-                }//fim if
-            }// if arq != 0
-            }//fim else r == 1004 a 1012
-  }//fim if r
-}
+//                        temp = str.toString();
+//                        data = temp.getBytes();
+//                        dops.write(data);/*INSERIR temp NO ARQUIVO*/
+//
+//            /* TOW */
+//                    }//if r == 1019
+//                }//if file !=null
+//            } //fim arq 1020 e 1019
+//            else {
+//            //System.out.println("iria entrar no arquivo");
+//            if(handle.observdata != null && handle.observdata.length()>0){
+//           // System.out.println("entrou no else!");
+//                int i, j, o;
+//                process = true;
+//              
+//                StringBuffer strbuff = new StringBuffer("");
+//                String line;
+//                converttime cti = new converttime(); // struct converttimeinfo cti;
+//
+//                if (handle.init < Constantes.NUMSTARTSKIP) {/* skip first epochs to detect correct data types */
+//                    ++handle.init;
+//                    System.out.println("incrementou init: " +handle.init);
+//                    if (handle.init == Constantes.NUMSTARTSKIP) {
+//                        System.out.println("entrou pra chamar handleheader: " +handle.init);
+//                       strbuff = HandleHeader();
+//                        System.out.println("chamou handle!");
+//                    }
+//                    else {
+//                        for (i = 0; i < handle.Data.numsats; ++i) {
+//                            handle.startflags |= handle.Data.dataflags[i];
+//                        }
+//                        System.out.println("vai setar com false!");
+//                        process = false; // continue;
+//                    }//else
+//                 }//fim if nunstartskip
+//                 if(process) {
+//
+//                    if (r == 2 && !(handle.validwarning != 0)) {
+//                        line = "No valid RINEX! All values are modulo 299792.458!"
+//                                + "           COMMENT\n";
+//                        strbuff.append(line); /*INSERIR LINE NO ARQUIVO*/
+//                        handle.validwarning = 1;
+//                    }
+//                   System.out.println("handle.Data.week!"+handle.Data.week);
+//                    System.out.println("handle.Data.timeofweek!"+handle.Data.timeofweek);
+//                     System.out.println("floor!"+(int)Math.floor(handle.Data.timeofweek / 1000.0));
+//                    Tempo.convertTime(cti, (int)handle.Data.week,
+//                            (int) Math.floor(handle.Data.timeofweek / 1000.0));
+//                    if (handle.rinex3 != 0) {
+//                        double z = (handle.Data.timeofweek / 1000.0)/1.0 ;
+//                        double f =  (z - (int) z)* 1.0;
+//                        f = cti.second + f;
+//                        line ="> "+Defines.formata("04",String.valueOf(cti.year), "int")+" "+Defines.formata("02",String.valueOf(cti.month), "int")+" "
+//                                +Defines.formata("02",String.valueOf(cti.day), "int")+" "+Defines.formata("02",String.valueOf(cti.hour), "int")
+//                                +" "+Defines.formata("02",String.valueOf(cti.minute), "int")+Defines.formata("11,7",String.valueOf(f), "float")
+//                                +" "+"0 "+Defines.formata("03",String.valueOf(handle.Data.numsats), "int")+"\n";
+//
+//                        strbuff.append(line); /*INSERIR LINE NO ARQUIVO*/
+//
+//                       int sat;
+//                        for (i = 0; i < handle.Data.numsats; ++i) {
+//
+//                            int glo = 0;
+//                            if (handle.Data.satellites[i] <= Constantes.PRN_GPS_END) {
+//                                sat = handle.Data.satellites[i];
+//                                line ="G"+Defines.formata("02",String.valueOf(sat), "int");//RTCM3Text("G%02d", handle.Data.satellites[i]);
+//
+//                                strbuff.append(line);/*INSERIR LINE NO ARQUIVO*/
+//
+//                            }
+//                            else if (handle.Data.satellites[i] >= Constantes.PRN_GLONASS_START
+//                                    && handle.Data.satellites[i] <= Constantes.PRN_GLONASS_END) {
+//                                sat = handle.Data.satellites[i] - (Constantes.PRN_GLONASS_START - 1);
+//                                line ="R"+Defines.formata("02",String.valueOf(sat), "int");//RTCM3Text("R%02d", handle.Data.satellites[i] - (Constantes.PRN_GLONASS_START - 1));
+//
+//                                strbuff.append(line);/*INSERIR LINE NO ARQUIVO*/
+//                                glo = 1;
+//                            }
+//                            else if (handle.Data.satellites[i] >= Constantes.PRN_WAAS_START
+//                                    && handle.Data.satellites[i] <= Constantes.PRN_WAAS_END) {
+//                                 sat = handle.Data.satellites[i] - Constantes.PRN_WAAS_START + 20;
+//                                 line ="S"+Defines.formata("02",String.valueOf(sat), "int");// RTCM3Text("S%02d", handle.Data.satellites[i] - Constantes.PRN_WAAS_START + 20);
+//
+//                                 strbuff.append(line);/*INSERIR LINE NO ARQUIVO*/
+//                            }
+//                            else {
+//                                 sat =handle.Data.satellites[i];
+//                                 line = Defines.formata("03",String.valueOf(sat), "int"); //RTCM3Text("%3d", handle.Data.satellites[i]);
+//                                 strbuff.append(line);
+//                            }
+//                            double dat;
+//                            if (glo != 0) {
+//                                for (j = 0; j < handle.numdatatypesGLO; ++j) {
+//                                    int df = handle.dataflagGLO[j];
+//                                    int pos = handle.dataposGLO[j];
+//                                    if ((handle.Data.dataflags[i] & df) != 0
+//                                            && !Double.isNaN(handle.Data.measdata[i][pos])
+//                                            && !Double.isInfinite(handle.Data.measdata[i][pos])) {
+//                                        char lli = ' ';
+//                                        char snr = ' ';
+//                                        if (df != 0 & (Constantes.GNSSDF_L1CDATA | Constantes.GNSSDF_L1PDATA) != 0) {
+//                                            if ((handle.Data.dataflags[i] & Constantes.GNSSDF_LOCKLOSSL1) != 0) {
+//                                                lli = '1';
+//                                            }
+//                                            snr = (char) ('0' + handle.Data.snrL1[i]);
+//                                        }
+//                                        if (df != 0 & (Constantes.GNSSDF_L2CDATA | Constantes.GNSSDF_L2PDATA) != 0) {
+//                                            if ((handle.Data.dataflags[i] & Constantes.GNSSDF_LOCKLOSSL2) != 0) {
+//                                                lli = '1';
+//                                            }
+//                                            snr = (char) ('0' + handle.Data.snrL2[i]);
+//                                        }
+//                                       dat = handle.Data.measdata[i][pos];
+//                                       line = Defines.formata("14,3",String.valueOf(dat), "floatd")+lli+snr;//RTCM3Text("%14.3f%c%c",handle.Data.measdata[i][pos], lli, snr);
+//                                       strbuff.append(line); /*INSERIR LINE NO ARQUIVO*/
+//                                    }
+//                                    else { /* no or illegal data */
+//                                        line ="                ";//RTCM3Text("                ");
+//                                        strbuff.append(line);/*INSERIR LINE NO ARQUIVO*/
+//                                    }
+//                                }
+//                            } //if(glo)
+//                            else {
+//                                for (j = 0; j < handle.numdatatypesGPS; ++j) {
+//                                    int df = handle.dataflagGPS[j];
+//                                    int pos = handle.dataposGPS[j];
+//                                    if ((handle.Data.dataflags[i] & df) != 0
+//                                            && !Double.isNaN(handle.Data.measdata[i][pos])
+//                                            && !Double.isInfinite(handle.Data.measdata[i][pos])) {
+//                                        char lli = ' ';
+//                                        char snr = ' ';
+//                                        if ((df & (Constantes.GNSSDF_L1CDATA | Constantes.GNSSDF_L1PDATA)) != 0) {
+//                                            if ((handle.Data.dataflags[i] & Constantes.GNSSDF_LOCKLOSSL1) != 0) {
+//                                                lli = '1';
+//                                            }
+//                                            snr = (char) ('0' + handle.Data.snrL1[i]);
+//                                        }
+//                                        if ((df & (Constantes.GNSSDF_L2CDATA | Constantes.GNSSDF_L2PDATA)) != 0) {
+//                                            if ((handle.Data.dataflags[i] & Constantes.GNSSDF_LOCKLOSSL2) != 0) {
+//                                                lli = '1';
+//                                            }
+//                                            snr = (char) ('0' + handle.Data.snrL2[i]);
+//                                        }
+//                                        dat = handle.Data.measdata[i][pos];
+//                                        line = Defines.formata("14,3",String.valueOf(dat), "floatd")+lli+snr;//RTCM3Text("%14.3f%c%c",handle.Data.measdata[i][pos], lli, snr);
+//                                        strbuff.append(line);/*INSERIR LINE NO ARQUIVO*/
+//                                    } else { /* no or illegal data */
+//                                         line ="                ";//RTCM3Text("                ");
+//                                         strbuff.append(line);  /*INSERIR LINE NO ARQUIVO*/
+//                                    }
+//                                }
+//                            }
+//                             line ="\n";//RTCM3Text("\n");
+//                             strbuff.append(line);
+//                             /*INSERIR LINE NO ARQUIVO*/
+//
+//                        }//for
+//                      } //fim rinex 3
+//                      else {
+//                         double z = (handle.Data.timeofweek / 1000.0)/1.0 ;
+//                        double f =  (z - (int) z)* 1.0;
+//                        f = cti.second + f;
+//                         line = " "+Defines.formata("02",String.valueOf((cti.year)%100), "int")+" "+Defines.formata("02",String.valueOf(cti.month), "int")+" "
+//                                +Defines.formata("02",String.valueOf(cti.day), "int")+" "+Defines.formata("02",String.valueOf(cti.hour), "int")
+//                                +" "+Defines.formata("02",String.valueOf(cti.minute), "int")+" "+
+//                                Defines.formata("10,7",String.valueOf(f), "float")+" "+"0 "+Defines.formata("03",String.valueOf(handle.Data.numsats), "int");
+//                         strbuff.append(line);
+//                      
+//                         int sat;
+//                         for (i = 0; i < 12 && i < handle.Data.numsats; ++i) {
+//                            sat = handle.Data.satellites[i];
+//                            if (handle.Data.satellites[i] <= Constantes.PRN_GPS_END) {
+//                                line="G"+Defines.formata("02",String.valueOf(sat), "int");//RTCM3Text("G%02d", handle.Data.satellites[i]);
+//                                strbuff.append(line);
+//                            } else if (handle.Data.satellites[i] >= Constantes.PRN_GLONASS_START
+//                                    && handle.Data.satellites[i] <= Constantes.PRN_GLONASS_END) {
+//                                sat = handle.Data.satellites[i] - (Constantes.PRN_GLONASS_START - 1);
+//                                line="R"+Defines.formata("02",String.valueOf(sat), "int");//RTCM3Text("R%02d", handle.Data.satellites[i] - (Constantes.PRN_GLONASS_START - 1));
+//                                strbuff.append(line);
+//
+//                            } else if (handle.Data.satellites[i] >= Constantes.PRN_WAAS_START
+//                                    && handle.Data.satellites[i] <= Constantes.PRN_WAAS_END) {
+//                                 sat = handle.Data.satellites[i] - Constantes.PRN_WAAS_START + 20;
+//                                line="S"+Defines.formata("02",String.valueOf(sat), "int");//RTCM3Text("S%02d", handle.Data.satellites[i] - Constantes.PRN_WAAS_START + 20);
+//                                strbuff.append(line);
+//                            } else {
+//                                 sat =handle.Data.satellites[i];
+//                                  line=Defines.formata("03",String.valueOf(sat), "int");//RTCM3Text("%3d", handle.Data.satellites[i]);
+//                                  strbuff.append(line);
+//                            }
+//                        }
+//                           line="\n";//RTCM3Text("\n");
+//                           strbuff.append(line);
+//                        o = 12;
+//                        j = handle.Data.numsats - 12;
+//                        System.out.println("handle.Data.numsats : "+handle.Data.numsats);
+//                        while (j > 0) {
+//                             line="                                "; //RTCM3Text("                                ");
+//
+//                             strbuff.append(line);
+//                             for (i = o; i < o + 12 && i < handle.Data.numsats; ++i) {
+//                                if (handle.Data.satellites[i] <= Constantes.PRN_GPS_END) {
+//                                    sat = handle.Data.satellites[i];
+//                                  line="G"+Defines.formata("02",String.valueOf(sat), "int");//  RTCM3Text("G%02d", handle.Data.satellites[i]);
+//
+//                                  strbuff.append(line);
+//                                } else if (handle.Data.satellites[i] >= Constantes.PRN_GLONASS_START && handle.Data.satellites[i] <= Constantes.PRN_GLONASS_END) {
+//                                    sat = handle.Data.satellites[i] - (Constantes.PRN_GLONASS_START - 1);
+//                                    line="R"+Defines.formata("02",String.valueOf(sat), "int");// RTCM3Text("R%02d", handle.Data.satellites[i] - (Constantes.PRN_GLONASS_START - 1));
+//
+//                                    strbuff.append(line); 
+//                                } else if (handle.Data.satellites[i] >= Constantes.PRN_WAAS_START && handle.Data.satellites[i] <= Constantes.PRN_WAAS_END) {
+//                                    sat = handle.Data.satellites[i] - Constantes.PRN_WAAS_START + 20;
+//                                    line="S"+Defines.formata("02",String.valueOf(sat), "int");// RTCM3Text("S%02d", handle.Data.satellites[i] - Constantes.PRN_WAAS_START + 20);
+//
+//                                    strbuff.append(line); 
+//                                } else {
+//                                    sat = handle.Data.satellites[i];
+//                                    line=Defines.formata("03",String.valueOf(sat), "int");// RTCM3Text("%3d", handle.Data.satellites[i]);
+//
+//                                    strbuff.append(line); 
+//                                }
+//                            }
+//                             line="\n";//RTCM3Text("\n");
+//                             strbuff.append(line); 
+//                            j -= 12;
+//                            o += 12;
+//                        }//fim while
+//                        for (i = 0; i < handle.Data.numsats; ++i) {
+//                            for (j = 0; j < handle.numdatatypesGPS; ++j) {
+//                                int v = 0;
+//                                int df = handle.dataflag[j];
+//                                int pos = handle.datapos[j];
+//                                if ((handle.Data.dataflags[i] & df) != 0
+//                                        && !Double.isNaN(handle.Data.measdata[i][pos])
+//                                        && !Double.isInfinite(handle.Data.measdata[i][pos])) {
+//                                    v = 1;
+//                                }
+//                                else {
+//                                    df = handle.dataflagGPS[j];
+//                                    pos = handle.dataposGPS[j];
+//
+//                                    if ((handle.Data.dataflags[i] & df) != 0
+//                                            && !Double.isNaN(handle.Data.measdata[i][pos])
+//                                            && !Double.isInfinite(handle.Data.measdata[i][pos])) {
+//                                        v = 1;
+//                                    }
+//                                }
+//
+//                                if (!(v != 0)) { /* no or illegal data */
+//                                    line="                ";// RTCM3Text("                ");
+//                                    strbuff.append(line);
+//                                }
+//                                else {
+//                                    char lli = ' ';
+//                                    String snr = " ";
+//                                    if ((df & (Constantes.GNSSDF_L1CDATA | Constantes.GNSSDF_L1PDATA)) != 0) {
+//                                        if ((handle.Data.dataflags[i] & Constantes.GNSSDF_LOCKLOSSL1) != 0) {
+//                                            lli = '1';
+//                                        }
+//                                        //snr = "0" + String.valueOf(handle.Data.snrL1[i]);
+//                                        snr =  String.valueOf(handle.Data.snrL1[i]);
+//                                    }
+//                                    if ((df & (Constantes.GNSSDF_L2CDATA | Constantes.GNSSDF_L2PDATA)) != 0) {
+//                                        if ((handle.Data.dataflags[i] & Constantes.GNSSDF_LOCKLOSSL2) != 0) {
+//                                            lli = '1';
+//                                        }
+//                                        //snr = "0" + String.valueOf(handle.Data.snrL2[i]);
+//                                        snr = String.valueOf(handle.Data.snrL2[i]);
+//                                    }
+//                                       double dat = handle.Data.measdata[i][pos];
+//                                       line = Defines.formata("14,3",String.valueOf(dat),"floatd")+lli+snr;//RTCM3Text("%14.3f%c%c",handle.Data.measdata[i][pos], lli, snr);
+//                                       strbuff.append(line);
+//
+//                                }
+//                                if (j % 5 == 4 || j == handle.numdatatypesGPS - 1) {
+//                                      line="\n";//RTCM3Text("\n");
+//                                      strbuff.append(line);
+//                                }
+//                            }//fim for2
+//                        }//fim for
+//                    }//rinex 2.11
+//                line = strbuff.toString();
+//                data = line.getBytes();
+//                dots.write(data);
+//                }//fim if
+//            }// if arq != 0
+//            }//fim else r == 1004 a 1012
+//  }//fim if r
+//}
 
 public int HandleRunBy(BufferAux buffer, int buffersize, BufferAux u, int rinex3) throws IOException {
 
@@ -1337,49 +1339,48 @@ public void fechaArquivo() throws IOException{
                 if (dops != null) {
     			dops.close();
     		}
-    		if (file != null) {
-    			file.close();
-    		}
-                if (handle.glonassfile != null) {
-    			handle.glonassfile.close();
-    		}
-                if (handle.gpsfile != null) {
-    			handle.gpsfile.close();
-    		}
+//    		if (file != null) {
+//    			file.close();
+//    		}
+//                if (handle.glonassfile != null) {
+//    			handle.glonassfile.close();
+//    		}
+//                if (handle.gpsfile != null) {
+//    			handle.gpsfile.close();
+//    		}
                 if (dots != null) {
     			dots.close();
 
-    		}if (filertcm != null) {
-    			filertcm.close();
+//    		}if (filertcm != null) {
+//    			filertcm.close();
     		}
      
 }
+//
+// public void commandAction(Command c, Displayable d) {
+//
+//          if(c == comando_concluir){
+//             
+//               done = true;
+//           
+//               display.setCurrent(inicio.getLista_opcoes());
+//          }
+//
+//
+//  }
 
- public void commandAction(Command c, Displayable d) {
-
-          if(c == comando_concluir){
-             
-               done = true;
-           
-               display.setCurrent(inicio.getLista_opcoes());
-          }
-
-
-  }
-
-  public void run() {
-        try {
-
-               String str = processarEnvio();
-               System.out.println("Resultado: "+str);
-               if(done) return;
-               System.out.println("hahaha fechou a thread ");
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-
-    }
+//  public void run() {
+////        try {
+////
+////               String str = processarEnvio();
+////               System.out.println("Resultado: "+str);
+////               if(done) return;
+////               System.out.println("hahaha fechou a thread ");
+////
+////        } catch (IOException ex) {
+////            ex.printStackTrace();
+////        }
+////
+////    }
 }
-
 

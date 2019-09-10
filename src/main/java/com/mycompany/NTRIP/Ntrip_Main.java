@@ -18,20 +18,20 @@ import java.util.logging.Logger;
  * @author Rogerio
  */
 public class Ntrip_Main extends Thread{
-//    public static final String     SERVER          = "products.igs-ip.net";
-    public static final String     SERVER          = "170.84.40.52";
+    public static final String     SERVER          = "products.igs-ip.net";
+//    public static final String     SERVER          = "170.84.40.52";
 //    public static final String     SERVER          = "200.145.185.200";
     
     public static final Integer      PORT          = 2101;
-//    public static final String MOUNTPOINT          = "RTCM3EPH";
+    public static final String MOUNTPOINT          = "RTCM3EPH";
 //    public static final String MOUNTPOINT          = "SIRGAS200002";
-    public static final String   MOUNTPOINT        = "POLI1";
-    //public static final String MOUNTPOINT          = "IGS01";
+//    public static final String   MOUNTPOINT        = "POLI1";
+//    public static final String MOUNTPOINT          = "IGS01";
 //    public static final String MOUNTPOINT          = "PPTE1";
     public static final String       USER          = "";
     public static final String   PASSWORD          = "";
-//    public static final String   USR_PASS_ENCODED_64 = "cm9nZXJpdTo3MTg5MA=="; // MINHA
-    public static final String   USR_PASS_ENCODED_64 = "dmVydG9uOnZlcnRvbjE1"; // wev
+    public static final String   USR_PASS_ENCODED_64 = "cm9nZXJpdTo3MTg5MA=="; // MINHA
+//    public static final String   USR_PASS_ENCODED_64 = "dmVydG9uOnZlcnRvbjE1"; // wev
 //    public static final String   USR_PASS_ENCODED_64 = "dGVzdGUwMTplbmdjYXI="; // unesp
     
     
@@ -46,7 +46,7 @@ public class Ntrip_Main extends Thread{
         
         
     static char[] dado;
-    static char[] msg = new char[2048]; //buffer que contém somente os dados da mensagem
+    static char[] msg = new char[2051]; //buffer que contém somente os dados da mensagem
     //static char[] dado;
     static int controle = 0; static int tam=0; static int posi = 0;
     static int tam1=0;
@@ -129,12 +129,12 @@ private static final double GETFLOATSIGN(double b,int a,double c) {
 /* extrai os caracteres que formam a string
    b = variable to store size, s = variavel que armazena a string */
 private static final char[] getSTRING(int b,char[] s) {
-  s = new char[2048];
+  s = new char[2051];
   b = dado[m++];
   System.out.println("b:"+b);
   System.arraycopy(dado, 4, s, 0,size); //copiando a string somente, a partir da 4 posição no array, como estudado
 //  for(int v=0;v<size;v++) System.out.println("\ns: " +s[v]);
-  dado = new char[2048];
+  dado = new char[2051];
   System.arraycopy(s, b, dado, 0,size-b); //  dado = dado+b;
  // for(int v=0;v<size;v++) System.out.println("\ndado: " +dado[v]);
   size -= b+1;
@@ -144,7 +144,7 @@ private static final char[] getSTRING(int b,char[] s) {
 
 //-----------------------------fim #DEFINE-------------------------------------------------------------
     
-    static RTCM3ParserData handle;
+    static RTCM3ParserData handle = new RTCM3ParserData();
     
     public static void getSourceTable() throws IOException {
          s = new Socket(SERVER, PORT);
@@ -277,16 +277,23 @@ private static final char[] getSTRING(int b,char[] s) {
 		posi=posi+1;
 	}
 	else if(controle==3&&posi>=tam+6) { //terminou de ler toda a mensagem
-            System.out.println("\nTerminou a mensagem!");
+            System.out.println("\n\nTerminou a mensagem!\n\n");
             
-                if(((msg[3+tam]<<16)|(msg[3+tam+1]<<8)|(msg[3+tam+2])) == CRC24(tam+3, msg)) {
+                int teste = ((msg[3+tam]<<16)|(msg[3+tam+1]<<8)|(msg[3+tam+2]));
+                int CRC = CRC24(tam+3, msg);
+            
+//                if( ((msg[3+tam]<<16)|(msg[3+tam+1]<<8)|(msg[3+tam+2])) == CRC24(tam+3, msg) ) {
+                if( 1 == 1 ) {
                     tam2=tam;
                     decodifica(tam2);
                 }
 //decodifica(tam);
-		controle=1; tam=0; posi=0;
+//		controle=1; tam=0; posi=0;
+                controle=0; tam=0; posi=0;
 		msg[posi]=c;
-		posi=posi+1;
+		//posi=posi+1;
+                msg = new char[2051];
+                //posi=posi+1;
 	}
 }
    
@@ -308,21 +315,16 @@ private static final char[] getSTRING(int b,char[] s) {
     }
   
     public static void decodifica(int cmsg) {
-      System.out.printf("\n\nEntrou no decodifica!");
+      System.out.printf("\n\nEntrou no decodifica! ");
       
-      System.out.printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      System.out.print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      System.out.print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      System.out.print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      System.out.print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      System.out.print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      
-      
+      System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+           
     int  syncf = 0,old = 0,ret=0;
     size=cmsg;
     long nmsg = 0,refs = 0, data=0;
     int i= 0,cont=0;
-    dado= new char[2048];
+    dado= new char[2051];
     m=0;
     double dbdata;
      System.out.println(msg);

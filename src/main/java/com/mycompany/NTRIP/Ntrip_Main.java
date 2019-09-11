@@ -245,8 +245,10 @@ private static final char[] getSTRING(int b,char[] s) {
 
 	int tam2;
         char preambulo = 0xD3;
-        System.out.print(c);
-	if(c == preambulo && controle == 0) { //se for o preambulo
+        
+//        System.out.print(c);
+	
+        if(c == preambulo && controle == 0) { //se for o preambulo
                 msg[posi]=c; //recebendo preambulo
                 controle=1; //passou pelo pré ambulo
 		posi=posi+1;
@@ -386,7 +388,7 @@ private static final char[] getSTRING(int b,char[] s) {
             System.out.println("GPS IODC: "+handle.ephemerisGPS.IODC);
 
             handle.ephemerisGPS.Crs=GETFLOATSIGN( data, 16, 1.0/(double)(1<<5));
-            System.out.println("GPS Crs: "+ handle.ephemerisGPS.Crc);
+            System.out.println("GPS Crs: "+ handle.ephemerisGPS.Crs);
 
             handle.ephemerisGPS.Delta_n=GETFLOATSIGN(data, 16, Constantes.R2R_PI/(double)(1<<30)/(double)(1<<13));
             System.out.println("GPS Delta_n: "+handle.ephemerisGPS.Delta_n);
@@ -443,16 +445,17 @@ private static final char[] getSTRING(int b,char[] s) {
             if(sv !=0) handle.ephemerisGPS.flags |= Constantes.GPSEPHF_L2PCODEDATA;
             System.out.println("GPS flags: "+handle.ephemerisGPS.flags);
             ret = 1019;
+            System.out.println("\n===========================================================\n");
         }
         break;
         
     }
-        try {
-            HandleByte( ret); // grava arquivo
-        } catch (IOException ex) {
-             System.out.println("Não foi possível a chamada");
-            ex.printStackTrace();
-        }
+//        try {
+//            HandleByte( ret); // grava arquivo
+//        } catch (IOException ex) {
+//             System.out.println("Não foi possível a chamada");
+//            ex.printStackTrace();
+//        }
    }
     
     public static void HandleByte(int r) throws IOException {

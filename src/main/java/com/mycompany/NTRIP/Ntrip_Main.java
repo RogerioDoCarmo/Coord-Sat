@@ -28,9 +28,10 @@ public class Ntrip_Main extends Thread{
 //    public static final String   MOUNTPOINT        = "POLI1";
 //    public static final String MOUNTPOINT          = "IGS01";
 //    public static final String MOUNTPOINT          = "PPTE1";
-    public static final String       USER          = "";
-    public static final String   PASSWORD          = "";
-    public static final String   USR_PASS_ENCODED_64 = "cm9nZXJpdTo3MTg5MA=="; // MINHA
+    public static final String       USER          = System.getenv("NTRIP_USER");
+    public static final String   PASSWORD          = System.getenv("NTRIP_PASS");
+    public static final String   USR_PASS_ENCODED_64 = Base64Coder.encodeString(USER +":"+ PASSWORD);
+//    public static final String     USR_PASS_ENCODED_64 = "cm9nZXJpdTo3MTg5MA=="; // MINHA
 //    public static final String   USR_PASS_ENCODED_64 = "dmVydG9uOnZlcnRvbjE1"; // wev
 //    public static final String   USR_PASS_ENCODED_64 = "dGVzdGUwMTplbmdjYXI="; // unesp
     
@@ -46,7 +47,7 @@ public class Ntrip_Main extends Thread{
         
         
     static char[] dado;
-    static char[] msg = new char[2051]; //buffer que contém somente os dados da mensagem
+    static char[] msg = new char[2048]; //buffer que contém somente os dados da mensagem
     //static char[] dado;
     static int controle = 0; static int tam=0; static int posi = 0;
     static int tam1=0;
@@ -129,12 +130,12 @@ private static final double GETFLOATSIGN(double b,int a,double c) {
 /* extrai os caracteres que formam a string
    b = variable to store size, s = variavel que armazena a string */
 private static final char[] getSTRING(int b,char[] s) {
-  s = new char[2051];
+  s = new char[2048];
   b = dado[m++];
   System.out.println("b:"+b);
   System.arraycopy(dado, 4, s, 0,size); //copiando a string somente, a partir da 4 posição no array, como estudado
 //  for(int v=0;v<size;v++) System.out.println("\ns: " +s[v]);
-  dado = new char[2051];
+  dado = new char[2048];
   System.arraycopy(s, b, dado, 0,size-b); //  dado = dado+b;
  // for(int v=0;v<size;v++) System.out.println("\ndado: " +dado[v]);
   size -= b+1;
@@ -293,8 +294,8 @@ private static final char[] getSTRING(int b,char[] s) {
 //		controle=1; tam=0; posi=0;
                 controle=0; tam=0; posi=0;
 		msg[posi]=c;
-		//posi=posi+1;
-                msg = new char[2051];
+		posi=posi+1;
+                //msg = new char[2048];
                 //posi=posi+1;
 	}
 }
@@ -326,15 +327,17 @@ private static final char[] getSTRING(int b,char[] s) {
     size=cmsg;
     long nmsg = 0,refs = 0, data=0;
     int i= 0,cont=0;
-    dado= new char[2051];
+    dado= new char[2048];
     m=0;
     double dbdata;
-     System.out.println(msg);
+     //System.out.println(msg);
     while(i<tam){ dado[i]= msg[i+3];cont++;i++;} //a mensagem começa a partir do quarto
     System.out.println("tamanho de dado : "+cont);
     numbits = 0;
     bitfield = 0;
 
+    msg = new char[2048];
+    
     nmsg=getBITS(nmsg,12); // os 12 primeiros identificam o numero da mensagem
     int type = (int)nmsg;
     System.out.println("Numero da mensagem : "+type);
@@ -448,7 +451,116 @@ private static final char[] getSTRING(int b,char[] s) {
             System.out.println("\n===========================================================\n");
         }
         break;
-        
+        case 1020: {  
+            handle.ephemerisGLONASS = new glonassephemeris();
+
+            handle.ephemerisGLONASS.flags |= Constantes.GLOEPHF_PAVAILABLE;
+            data =getBITS(data, 6);
+            handle.ephemerisGLONASS.almanac_number=(int)data;
+            System.out.println("GLONASS Satellite ID (Satellite Slot Number): "+handle.ephemerisGLONASS.almanac_number);
+
+            data=getBITS(data, 5);
+            handle.ephemerisGLONASS.frequency_number=(int)data-7;
+            System.out.println("GLONASS Satellite Frequency Channel Number : "+handle.ephemerisGLONASS.frequency_number);
+
+            data=getBITS(data, 1);
+            if(data!=0) handle.ephemerisGLONASS.flags |= Constantes.GLOEPHF_ALMANACHEALTHY;
+            System.out.println("GLONASS almanac health : "+handle.ephemerisGLONASS.flags );
+
+            data=getBITS(data, 1);
+            if(data!=0) handle.ephemerisGLONASS.flags |= Constantes.GLOEPHF_ALMANACHEALTHOK;
+             System.out.println("GLONASS almanac health availability indicator : "+handle.ephemerisGLONASS.flags);
+
+            data=getBITS(data, 2);
+            if((data & 1)!=0) handle.ephemerisGLONASS.flags |= Constantes.GLOEPHF_P10TRUE;
+            if((data & 2)!=0) handle.ephemerisGLONASS.flags |= Constantes.GLOEPHF_P11TRUE;
+            System.out.println("GLONASS P1: "+handle.ephemerisGLONASS.flags);
+
+            data=getBITS(data, 5);
+            handle.ephemerisGLONASS.tk=(int)data*60*60;
+            System.out.println("GLONASS tk : "+handle.ephemerisGLONASS.tk);
+
+            data=getBITS(data, 6);
+            handle.ephemerisGLONASS.tk += (int)data*60;
+            System.out.println("GLONASS tk : "+handle.ephemerisGLONASS.tk);
+
+            data=getBITS(data, 1);
+            handle.ephemerisGLONASS.tk += (int)data*30;
+            System.out.println("GLONASS tk : "+handle.ephemerisGLONASS.tk);
+
+            data=getBITS(data, 1);
+            if(data!=0) handle.ephemerisGLONASS.flags|=Constantes.GLOEPHF_UNHEALTHY;
+             System.out.println("GLONASS MSB "+handle.ephemerisGLONASS.flags);
+
+            data=getBITS(data, 1);
+            if(data!=0)handle.ephemerisGLONASS.flags |= Constantes.GLOEPHF_P2TRUE;
+            System.out.println("GLONASS P2 : "+handle.ephemerisGLONASS.flags);
+
+            data=getBITS(data, 7);
+            handle.ephemerisGLONASS.tb=(int)data*15*60;
+            System.out.println("GLONASS tb : "+handle.ephemerisGLONASS.tb);
+
+            handle.ephemerisGLONASS.x_velocity=GETFLOATSIGNM(data, 24, 1.0/(double)(1<<20));
+            System.out.println("x_velocity: "+handle.ephemerisGLONASS.x_velocity);
+
+            handle.ephemerisGLONASS.x_pos=GETFLOATSIGNM(data, 27, 1.0/(double)(1<<11));
+            System.out.println("x_pos:"+handle.ephemerisGLONASS.x_pos);
+
+            handle.ephemerisGLONASS.x_acceleration=GETFLOATSIGNM(data, 5, 1.0/(double)(1<<30));
+            System.out.println("x_acceleration: "+handle.ephemerisGLONASS.x_acceleration);
+
+            handle.ephemerisGLONASS.y_velocity=GETFLOATSIGNM(data, 24, 1.0/(double)(1<<20));
+            System.out.println("y_velocity:"+handle.ephemerisGLONASS.y_velocity);
+
+            handle.ephemerisGLONASS.y_pos=GETFLOATSIGNM(data, 27, 1.0/(double)(1<<11));
+            System.out.println("y_pos: "+handle.ephemerisGLONASS.y_pos);
+
+            handle.ephemerisGLONASS.y_acceleration=GETFLOATSIGNM(data, 5, 1.0/(double)(1<<30));
+            System.out.println("y_acceleration: "+handle.ephemerisGLONASS.y_acceleration);
+
+            handle.ephemerisGLONASS.z_velocity=GETFLOATSIGNM(data, 24, 1.0/(double)(1<<20));
+            System.out.println("z_velocity: "+handle.ephemerisGLONASS.z_velocity);
+
+            handle.ephemerisGLONASS.z_pos=GETFLOATSIGNM(data, 27, 1.0/(double)(1<<11));
+            System.out.println("z_pos: "+handle.ephemerisGLONASS.z_pos);
+
+            handle.ephemerisGLONASS.z_acceleration=GETFLOATSIGNM(data, 5, 1.0/(double)(1<<30));
+            System.out.println("z_acceleration: "+handle.ephemerisGLONASS.z_acceleration);
+
+            data=getBITS(data, 1);
+            if(data!=0) handle.ephemerisGLONASS.flags |= Constantes.GLOEPHF_P3TRUE;
+            System.out.println("flags: "+handle.ephemerisGLONASS.flags);
+
+            handle.ephemerisGLONASS.gamma=GETFLOATSIGNM(data, 11, 1.0/(double)(1<<30)/(double)(1<<10));
+            System.out.println("gamma: "+handle.ephemerisGLONASS.gamma);
+
+            SKIPBITS(3); // GLONASS-M P, GLONASS-M ln (third string)
+
+            handle.ephemerisGLONASS.tau=GETFLOATSIGNM(data, 22, 1.0/(double)(1<<30));
+            System.out.println("tau: "+handle.ephemerisGLONASS.tau);
+
+            SKIPBITS(5); /* GLONASS-M delta tau n(tb) */
+
+            handle.ephemerisGLONASS.E=(int)getBITS(data, 5);
+            System.out.println("E: "+handle.ephemerisGLONASS.E);
+
+
+            /*getBITS(b, 1) / * GLONASS-M P4 */
+            /*getBITS(b, 4) / * GLONASS-M Ft */
+            /*getBITS(b, 11) / * GLONASS-M Nt */
+            /*getBITS(b, 2) / * GLONASS-M M */
+            /*getBITS(b, 1) / * GLONASS-M The Availability of Additional Data */
+            /*getBITS(b, 11) / * GLONASS-M Na */
+            /* GETFLOATSIGNM(b, 32, 1.0/(double)(1<<30)/(double)(1<<1)) / * GLONASS tau c */
+            /*getBITS(b, 5) / * GLONASS-M N4 */
+            /* GETFLOATSIGNM(b, 22, 1.0/(double)(1<<30)/(double)(1<<1)) / * GLONASS-M tau GPS */
+            /*getBITS(b, 1) / * GLONASS-M ln (fifth string) */
+            handle.ephemerisGLONASS.GPSWeek = (int)handle.GPSWeek;
+            handle.ephemerisGLONASS.GPSTOW = (int)handle.GPSTOW;
+           ret = 1020;
+           // exit(1);
+       }
+       break;      
     }
 //        try {
 //            HandleByte( ret); // grava arquivo

@@ -22,11 +22,13 @@ public class RinexParser {
     static final int INCREMENT_MINUTES = 0;
     static final int INCREMENT_SECONDS = 1;
     
-    static int flag_min_seconds = INCREMENT_SECONDS; // 0 == minutes; 1 == seconds
-    static int flag_gnss = PROCESS_BEIDOU; // 0 == GPS, 1 = Galileo, 2 - Beidou
+    static int flag_min_seconds = INCREMENT_MINUTES; // 0 == minutes; 1 == seconds
+    static int flag_gnss = PROCESS_GPS; // 0 == GPS, 1 = Galileo, 2 - Beidou
     static final int LAGRANGE_DEGREE = 6;
     
     static StringBuilder builder;
+    
+    static int day_wek = 6;
     
     public static double convert_HMS_TO_HOURS(double hour, double minutes, double seconds) {
         return ( hour + minutes*(1d/60d) + seconds*(1d/3600d));
@@ -61,7 +63,7 @@ public class RinexParser {
         System.out.println("    Calculo de Coordenadas de Satelites!\n");
         System.out.println("==============================================\n\n");
         
-        String fileName    = "C:\\Users\\Rogerio\\Desktop\\coord\\processamento\\recorte.19p";
+        String fileName    = "C:\\Users\\Rogerio\\Desktop\\bruno\\bruno.rnx";
         
         readRINEX_Navigation_3(fileName);
         
@@ -72,8 +74,8 @@ public class RinexParser {
                
         //calcCoordSat();
                         
-        int fit_interval = 24; // 0 == 24
-        int incremento = 5; // 0 == 5
+        int fit_interval = 8; // 0 == 24
+        int incremento = 15; // 0 == 5
         if (flag_min_seconds == INCREMENT_SECONDS) { // seconds
             fit_interval = 20;
             incremento = 15;           
@@ -81,10 +83,10 @@ public class RinexParser {
                 
         //fit_interval = 6; // Numero de epocas
         calcCoordSat_Interval(flag_gnss, -incremento, fit_interval);
-        //print_file("C:\\Users\\Rogerio\\Desktop\\calc_interpol\\coord_calc_C12_sec_min.txt");
+        print_file("C:\\Users\\Rogerio\\Desktop\\bruno\\coord_calc_BRUNO_min.txt");
         System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         calcCoordSat_Interval(flag_gnss,  incremento, fit_interval);
-        //print_file("C:\\Users\\Rogerio\\Desktop\\calc_interpol\\coord_calc_C12_sec_max.txt");
+        print_file("C:\\Users\\Rogerio\\Desktop\\bruno\\coord_calc_BRUNO_max.txt");
         
         //interpolateCoordSat_Interval(flag_gnss,incremento, fit_interval);
         //print_file("C:\\Users\\Rogerio\\Desktop\\calc_interpol\\coord_interpol_C12.txt");
@@ -366,7 +368,7 @@ public class RinexParser {
     }
 
     public static double calc_Toc(GNSSDate dataGNSS) { // TODO: Calc day of week
-        return (  (6 * 24 + dataGNSS.getHour()) * 3600 + dataGNSS.getMin() * 60 + dataGNSS.getSec() );
+        return (  (day_wek * 24 + dataGNSS.getHour()) * 3600 + dataGNSS.getMin() * 60 + dataGNSS.getSec() );
     }
  
     public static Double Interpolation_Lagrange(double x, ArrayList<Double> arrayx, ArrayList<Double> arrayy) {        
@@ -559,7 +561,7 @@ public class RinexParser {
 //        GNSSDate dataObservacao = listaEfemeridesAtual.get(0).getData();
         
         GNSSDate dataObservacao = listaEfemeridesAtual.get(pos_inicial).getData();
-        dataObservacao.setHour(12);
+        dataObservacao.setHour(6);
         dataObservacao.setMin(0);
         dataObservacao.setSec(0);
         

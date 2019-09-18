@@ -157,6 +157,7 @@ public class UI_Graph_Multiline extends JFrame { // the class extends the JFrame
           //  @Override
             //public void run() {
             UI_Graph_Multiline grafico =  new UI_Graph_Multiline(args[0], args[1], args[2], args[3], lista);
+            grafico.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             grafico.setVisible(true);
             //}
         //});

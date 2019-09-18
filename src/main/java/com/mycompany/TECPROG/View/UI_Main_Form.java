@@ -5,6 +5,12 @@
  */
 package com.mycompany.TECPROG.View;
 
+import com.mycompany.TECPROG.Controller.LocalFiles_Handler;
+import com.mycompany.TECPROG.Controller.Main;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Rogerio
@@ -16,6 +22,7 @@ public class UI_Main_Form extends javax.swing.JFrame {
      */
     public UI_Main_Form() {
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**
@@ -27,21 +34,157 @@ public class UI_Main_Form extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtRESULT = new javax.swing.JTextArea();
+        jLabel1 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        btnNtrip = new javax.swing.JButton();
+        btnGrafico = new javax.swing.JButton();
+        btnSP3 = new javax.swing.JButton();
+        btnBRDC = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Trabalho Técnicas e Programação - Rogério");
+        setResizable(false);
+
+        txtRESULT.setEditable(false);
+        txtRESULT.setColumns(20);
+        txtRESULT.setRows(5);
+        jScrollPane1.setViewportView(txtRESULT);
+
+        jLabel1.setText("Resultados:");
+
+        jButton1.setText("Mensagens RTCM");
+        jButton1.setToolTipText("");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        btnNtrip.setText("Source Table");
+        btnNtrip.setToolTipText("");
+        btnNtrip.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNtripActionPerformed(evt);
+            }
+        });
+
+        btnGrafico.setText("Grafico");
+        btnGrafico.setEnabled(false);
+        btnGrafico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGraficoActionPerformed(evt);
+            }
+        });
+
+        btnSP3.setText("Baixar SP3");
+        btnSP3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSP3ActionPerformed(evt);
+            }
+        });
+
+        btnBRDC.setText("Baixar BRDC");
+        btnBRDC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBRDCActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(44, 44, 44)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnBRDC, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnSP3, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(btnNtrip, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
+                                .addComponent(jButton1)
+                                .addGap(81, 81, 81)
+                                .addComponent(btnGrafico, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(12, 12, 12)))
+                        .addGap(40, 40, 40))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(39, 39, 39)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnNtrip, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnGrafico, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnBRDC, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSP3, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(29, 29, 29))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btnNtripActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNtripActionPerformed
+        try {
+            txtRESULT.setText(Main.getNtripSourceTable());
+        } catch (IOException ex) {
+            Logger.getLogger(UI_Main_Form.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnNtripActionPerformed
+
+    private void btnGraficoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGraficoActionPerformed
+        try {
+//            UI_InputDialogInFrame tela = new UI_InputDialogInFrame();
+            
+            UI_InputDialogInFrame.main();
+            
+            Main.show_CoordGraph(UI_InputDialogInFrame.getResponse());
+        } catch (IOException ex) {
+            Logger.getLogger(UI_Main_Form.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnGraficoActionPerformed
+
+    private void btnSP3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSP3ActionPerformed
+        try {
+            Main.download_PreciseEphemFromFTPofLastWeek();
+            
+            txtRESULT.setText(LocalFiles_Handler.read_textFile(Main.getFileName_SP3()));
+            
+            btnGrafico.setEnabled(true);
+            btnGrafico.requestFocus();
+        } catch (IOException ex) {
+            Logger.getLogger(UI_Main_Form.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnSP3ActionPerformed
+
+    private void btnBRDCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBRDCActionPerformed
+        try {
+            Main.download_BRDCephemFromFTPofYesterday();
+            txtRESULT.setText(LocalFiles_Handler.read_textFile(Main.getFileName_Broadcast()));
+        } catch (IOException ex) {
+            Logger.getLogger(UI_Main_Form.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnBRDCActionPerformed
 
     /**
      * @param args the command line arguments
@@ -79,5 +222,13 @@ public class UI_Main_Form extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBRDC;
+    private javax.swing.JButton btnGrafico;
+    private javax.swing.JButton btnNtrip;
+    private javax.swing.JButton btnSP3;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea txtRESULT;
     // End of variables declaration//GEN-END:variables
 }

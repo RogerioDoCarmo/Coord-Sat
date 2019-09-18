@@ -2,6 +2,7 @@ package com.mycompany.TECPROG.Controller;
 
 import com.mycompany.TECPROG.Model.CoordenadaGNSS;
 import com.mycompany.TECPROG.View.UI_Graph_Multiline;
+import com.mycompany.TECPROG.View.UI_Main_Form;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,10 +20,10 @@ public class Main {
     
     static File lastFileDownloaded;
     public static ArrayList<CoordenadaGNSS> listaCoordPrecisasLidas = new ArrayList<>();
-    static String fileName_SP3;
-    static String fileName_Broadcast;
+    private static String fileName_SP3;
+    private static String fileName_Broadcast;
  
-    static private void download_BRDCephemFromFTPofYesterday() throws IOException {
+    static public void download_BRDCephemFromFTPofYesterday() throws IOException {
         String fileName = "C:\\Users\\Rogerio\\Desktop\\TEC\\Ephemeris_BRDC_Yesterday.Z";
         File downloadedFile = new File(fileName);
 
@@ -44,10 +45,10 @@ public class Main {
         lastFileDownloaded = ftp.getmNewFile();
 
         fileName_Broadcast = "C:\\Users\\Rogerio\\Desktop\\TEC\\Ephemeris_BRDC_Yesterday.19n";
-        decompressZfile(fileName_Broadcast);
+        decompressZfile(getFileName_Broadcast());
     }
 
-    static private void download_PreciseEphemFromFTPofLastWeek() throws IOException {
+    static public void download_PreciseEphemFromFTPofLastWeek() throws IOException {
         String fileName = "C:\\Users\\Rogerio\\Desktop\\TEC\\Ephemeris_SP3_LastWeek.Z";
         File downloadedFile = new File(fileName);
 
@@ -64,7 +65,7 @@ public class Main {
         lastFileDownloaded = ftp.getmNewFile();
 
         fileName_SP3 = "C:\\Users\\Rogerio\\Desktop\\TEC\\Ephemeris_SP3_LastWeek.19n";
-        decompressZfile(fileName_SP3);
+        decompressZfile(getFileName_SP3());
     }
 
     static private void decompressZfile(String fileName) {
@@ -91,22 +92,46 @@ public class Main {
         }
     }   
     
-    public static void main(String[] args) throws IOException {
-        download_PreciseEphemFromFTPofLastWeek();
-        download_BRDCephemFromFTPofYesterday();
-        
-        LocalFiles_Handler.read_sp3_cut(fileName_SP3, "G18");
+    public static String getNtripSourceTable() throws IOException {
+        return Ntrip_Handler.getSourceTable();
+    }
+    
+    public static void show_CoordGraph(String PRN) throws IOException {
+        LocalFiles_Handler.read_SP3(getFileName_SP3(), PRN);
         listaCoordPrecisasLidas = LocalFiles_Handler.getListaCoordPrecisasLidas();
         
         String[] argumentos = new String[4];
         argumentos[0] = "Gráficos de Coordenadas do satélite";
         argumentos[1] = "Tempo (h)";
         argumentos[2] = "Coordenadas (Km)";
-        argumentos[3] = "G50";
+        argumentos[3] = PRN;
         
         
         UI_Graph_Multiline.main(argumentos, listaCoordPrecisasLidas);
+    }
+    
+    public static void main(String[] args) throws IOException {
+        fileName_Broadcast = "C:\\Users\\Rogerio\\Desktop\\TEC\\Ephemeris_BRDC_Yesterday.19n";
+        fileName_SP3       = "C:\\Users\\Rogerio\\Desktop\\TEC\\Ephemeris_SP3_LastWeek.19n";
         
+        //download_BRDCephemFromFTPofYesterday();
+        
+        UI_Main_Form main_form = new UI_Main_Form();
+        main_form.setVisible(true);
+    }
+
+    /**
+     * @return the fileName_SP3
+     */
+    public static String getFileName_SP3() {
+        return fileName_SP3;
+    }
+
+    /**
+     * @return the fileName_Broadcast
+     */
+    public static String getFileName_Broadcast() {
+        return fileName_Broadcast;
     }
     
 }

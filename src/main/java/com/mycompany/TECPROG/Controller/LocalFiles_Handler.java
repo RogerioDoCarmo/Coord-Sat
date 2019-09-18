@@ -27,8 +27,24 @@ public class LocalFiles_Handler {
     
     private static ArrayList<CoordenadaGNSS> listaCoordPrecisasLidas;
     private static StringBuilder sb;     
-       
-    public static String read_sp3_cut(String fileName, String aPRN) throws IOException {
+    
+    public static String read_textFile(String fileName) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+
+        sb = new StringBuilder();
+
+        String mLine;
+
+        while ((mLine = reader.readLine()) != null) {
+            sb.append(mLine);
+            sb.append("\n");
+        }
+                    
+        reader.close();
+        return sb.toString();
+    }
+    
+    public static String read_SP3(String fileName, String aPRN) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
 
         sb = new StringBuilder();

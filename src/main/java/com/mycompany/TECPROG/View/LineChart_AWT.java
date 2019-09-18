@@ -50,6 +50,17 @@ public class LineChart_AWT extends ApplicationFrame {
       return dataset;
    }
    
+   private DefaultCategoryDataset createDataset_example( ) {
+      DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+      dataset.addValue( 15 , "schools" , "1970" );
+      dataset.addValue( 30 , "schools" , "1980" );
+      dataset.addValue( 60 , "schools" ,  "1990" );
+      dataset.addValue( 120 , "schools" , "2000" );
+      dataset.addValue( 240 , "schools" , "2010" );
+      dataset.addValue( 300 , "schools" , "2014" );
+      return dataset;
+   }
+   
    public static void main( String[ ] args ) throws IOException {
       LineChart_AWT chart = new LineChart_AWT(
          "School Vs Years" ,

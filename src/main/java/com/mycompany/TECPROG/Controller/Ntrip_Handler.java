@@ -33,10 +33,10 @@ public class Ntrip_Handler {
 //    public static final String     SERVER          = "200.145.185.200";
 
     public static final Integer PORT = 2101;
-    public static final String MOUNTPOINT = "RTCM3EPH";
+//    public static final String MOUNTPOINT = "RTCM3EPH";
 //    public static final String MOUNTPOINT          = "SIRGAS200002";
 //    public static final String MOUNTPOINT          = "POLI1";
-//    public static final String MOUNTPOINT          = "IGS01";
+    public static final String MOUNTPOINT          = "IGS01";
 //    public static final String MOUNTPOINT          = "PPTE1";
 
     public static final String USER = System.getenv("NTRIP_USER");

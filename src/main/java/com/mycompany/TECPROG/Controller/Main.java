@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+
 import org.apache.commons.compress.compressors.z.ZCompressorInputStream;
 
 /**
@@ -106,6 +107,7 @@ public class Main {
     }
  
     public static void show_CoordGraph(String PRN) throws IOException {
+        Main.fileName_SP3 = "C:\\Users\\Rogerio\\Desktop\\TEC\\Ephemeris_SP3_LastWeek.19n";
         LocalFiles_Handler.read_SP3(getFileName_SP3(), PRN);
         listaCoordPrecisasLidas = LocalFiles_Handler.getListaCoordPrecisasLidas();
         

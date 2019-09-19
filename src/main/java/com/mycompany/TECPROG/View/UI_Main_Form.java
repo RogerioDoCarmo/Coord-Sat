@@ -77,7 +77,6 @@ public class UI_Main_Form extends javax.swing.JFrame {
         });
 
         btnGrafico.setText("Grafico");
-        btnGrafico.setEnabled(false);
         btnGrafico.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGraficoActionPerformed(evt);

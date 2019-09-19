@@ -19,11 +19,11 @@ public class CoordenadaGNSS implements Comparable<CoordenadaGNSS> {
     
     @Override
     public String toString(){
-        return  "PRN: "    + PRN + "\n" +
-                "X [km]: " + X   + "\n" +
-                "Y [km]: " + Y   + "\n" +
-                "Z [km]: " + Z   + "\n" +
-                "Dts[s]: " + dts + "\n";
+        return  "PRN: "     + PRN + "\n" +
+                " X [Km]: " +  X  + "\n" +
+                " Y [Km]: " +  Y  + "\n" +
+                " Z [Km]: " +  Z  + "\n" +
+                "Dts[ms]: " + dts + "\n";
     }
 
     /**

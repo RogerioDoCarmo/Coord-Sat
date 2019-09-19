@@ -4,6 +4,7 @@ import com.mycompany.TECPROG.Model.CoordenadaGNSS;
 import com.mycompany.TECPROG.View.UI_Graph_Multiline;
 import com.mycompany.TECPROG.View.UI_Main_Form;
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -95,7 +96,15 @@ public class Main {
     public static String getNtripSourceTable() throws IOException {
         return Ntrip_Handler.getSourceTable();
     }
+ 
+    public static void getNtripFromMountpoint() throws IOException {
+        Ntrip_Handler.getFromMountPoint();
+    }
     
+    public static BufferedReader getNtripBuffer() throws IOException {
+        return Ntrip_Handler.getMountpointBuffer();
+    }
+ 
     public static void show_CoordGraph(String PRN) throws IOException {
         LocalFiles_Handler.read_SP3(getFileName_SP3(), PRN);
         listaCoordPrecisasLidas = LocalFiles_Handler.getListaCoordPrecisasLidas();

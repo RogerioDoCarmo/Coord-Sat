@@ -43,7 +43,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="btnNtrip" min="-2" pref="112" max="-2" attributes="0"/>
                               <EmptySpace pref="122" max="32767" attributes="0"/>
-                              <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnMountpoint" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="81" max="-2" attributes="0"/>
                               <Component id="btnGrafico" min="-2" pref="127" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
@@ -61,7 +61,7 @@
               <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="btnNtrip" alignment="3" min="-2" pref="54" max="-2" attributes="0"/>
-                  <Component id="jButton1" alignment="3" min="-2" pref="54" max="-2" attributes="0"/>
+                  <Component id="btnMountpoint" alignment="3" min="-2" pref="54" max="-2" attributes="0"/>
                   <Component id="btnGrafico" alignment="3" min="-2" pref="54" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -100,13 +100,13 @@
         <Property name="text" type="java.lang.String" value="Resultados:"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton1">
+    <Component class="javax.swing.JButton" name="btnMountpoint">
       <Properties>
         <Property name="text" type="java.lang.String" value="Mensagens RTCM"/>
         <Property name="toolTipText" type="java.lang.String" value=""/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnMountpointActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnNtrip">

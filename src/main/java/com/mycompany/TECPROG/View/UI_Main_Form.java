@@ -10,6 +10,7 @@ import com.mycompany.TECPROG.Controller.Main;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.text.DefaultCaret;
 
 /**
  *
@@ -23,8 +24,13 @@ public class UI_Main_Form extends javax.swing.JFrame {
     public UI_Main_Form() {
         initComponents();
         setLocationRelativeTo(null);
+        DefaultCaret caret = (DefaultCaret)txtRESULT.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.OUT_BOTTOM);
+        NtripBuffer = new StringBuilder();
     }
 
+    public static StringBuilder NtripBuffer;
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -37,7 +43,7 @@ public class UI_Main_Form extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         txtRESULT = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnMountpoint = new javax.swing.JButton();
         btnNtrip = new javax.swing.JButton();
         btnGrafico = new javax.swing.JButton();
         btnSP3 = new javax.swing.JButton();
@@ -54,11 +60,11 @@ public class UI_Main_Form extends javax.swing.JFrame {
 
         jLabel1.setText("Resultados:");
 
-        jButton1.setText("Mensagens RTCM");
-        jButton1.setToolTipText("");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnMountpoint.setText("Mensagens RTCM");
+        btnMountpoint.setToolTipText("");
+        btnMountpoint.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnMountpointActionPerformed(evt);
             }
         });
 
@@ -112,7 +118,7 @@ public class UI_Main_Form extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addComponent(btnNtrip, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
-                                .addComponent(jButton1)
+                                .addComponent(btnMountpoint)
                                 .addGap(81, 81, 81)
                                 .addComponent(btnGrafico, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(12, 12, 12)))
@@ -124,7 +130,7 @@ public class UI_Main_Form extends javax.swing.JFrame {
                 .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnNtrip, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnMountpoint, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnGrafico, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
@@ -140,14 +146,43 @@ public class UI_Main_Form extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    Painel painel = new Painel();
+    Thread le1 = new Thread(painel);
+
+    private void btnMountpointActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMountpointActionPerformed
+           try {
+            flag = false;
+            
+            //Main.getNtripFromMountpoint();
+
+            //le1.getState().equals(Thread.State.BLOCKED)
+            if (le1.getState().equals(Thread.State.NEW)) {
+                le1.start(); 
+            }
+            
+            txtRESULT.setText("");
+            txtRESULT.setText(NtripBuffer.toString());
+            //le1.interrupt();
+            
+        } catch (Exception ex) {
+            Logger.getLogger(UI_Main_Form.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnMountpointActionPerformed
 
     private void btnNtripActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNtripActionPerformed
         try {
+//            if (!le1.getState().equals(Thread.State.NEW)){
+////                le1.wait();
+//                flag = true;
+//            }
+            
+            flag = true;
+            txtRESULT.setText("");
+            
             txtRESULT.setText(Main.getNtripSourceTable());
         } catch (IOException ex) {
+            Logger.getLogger(UI_Main_Form.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
             Logger.getLogger(UI_Main_Form.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnNtripActionPerformed
@@ -220,13 +255,47 @@ public class UI_Main_Form extends javax.swing.JFrame {
             }
         });
     }
+    
+    boolean flag = false;
+    
+        public class Painel implements Runnable {
+
+        @Override
+        public void run() {
+
+            try {
+                Main.getNtripFromMountpoint();
+            } catch (IOException ex) {
+                Logger.getLogger(UI_Main_Form.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            int cont = 0;
+            while (!flag) {
+                try {
+//                    Thread.sleep(500);                    
+                } catch (Exception ex) {
+                    Logger.getLogger(UI_Main_Form.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("Erro: " + ex.getMessage());
+                }
+
+                try {
+                    txtRESULT.setText(NtripBuffer.toString());
+                } catch (Exception ex) {
+                    Logger.getLogger(UI_Main_Form.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+             }
+            
+
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBRDC;
     private javax.swing.JButton btnGrafico;
+    private javax.swing.JButton btnMountpoint;
     private javax.swing.JButton btnNtrip;
     private javax.swing.JButton btnSP3;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea txtRESULT;
